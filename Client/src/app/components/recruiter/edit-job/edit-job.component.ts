@@ -67,24 +67,24 @@ export class EditJobComponent implements OnInit {
   ngOnInit(): void {
     if (this.jobId) {
       this.recruiterService.getJobByJobID(this.jobId).subscribe((job) => {
-        console.log('job',job);
-        const formattedLastDate = formatDate(job.last_date, 'yyyy-MM-dd', 'en-US');
+        console.log('job',job.data);
+        const formattedLastDate = formatDate(job.data.last_date, 'yyyy-MM-dd', 'en-US');
 
         this.jobForm.patchValue({
-          job_title: job.job_title,
-          job_location: job.job_location,
-          salary_range_min: job.salary_range_min,
-          salary_range_max: job.salary_range_max,
-          job_type: job.job_type,
-          job_mode: job.job_mode,
-          experience_required: job.experience_required,
+          job_title: job.data.job_title,
+          job_location: job.data.job_location,
+          salary_range_min: job.data.salary_range_min,
+          salary_range_max: job.data.salary_range_max,
+          job_type: job.data.job_type,
+          job_mode: job.data.job_mode,
+          experience_required: job.data.experience_required,
           last_date: formattedLastDate,
-          description: job.description,
-          responsibilities: job.responsibilities,
-          preference: job.preference
+          description: job.data.description,
+          responsibilities: job.data.responsibilities,
+          preference: job.data.preference
         });
 
-        job.skills_required.forEach((skill: string) => {
+        job.data.skills_required.forEach((skill: string) => {
           this.skills.push(new FormControl(skill, Validators.required));
         });
       });

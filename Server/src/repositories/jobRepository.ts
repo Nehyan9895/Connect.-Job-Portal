@@ -9,15 +9,15 @@ class JobRepository{
     }
 
     async findJobByJobId(jobId:string){
-        return await Job.findOne({job_id:jobId})
+        return await Job.findOne({job_id:jobId}).populate('recruiter_id')
     }
 
     async findAllJobs() {
-        return await Job.find();
+        return await Job.find().populate('recruiter_id');
     }
 
     async findJobsByRecruiterId(recruiter_id:string){
-        return await Job.find({ recruiter_id: recruiter_id });
+        return await Job.find({ recruiter_id: recruiter_id }).populate('recruiter_id');
     } 
 
     async getJobById(job_id:string){

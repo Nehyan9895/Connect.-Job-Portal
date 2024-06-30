@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from '../../../environments/environment.development';
 import { Job } from '../../models/job.model';
 
@@ -11,17 +12,40 @@ import { Job } from '../../models/job.model';
 })
 export class userService {
 
+  private token: string | null = null;
+  private jwtHelper = new JwtHelperService();
   private apiKey = environment.userApiKey
 
   constructor(private http:HttpClient,private router:Router,@Inject(PLATFORM_ID) private platformId: Object){  }
 
-  get isLoggedIn(): boolean {
-    if (isPlatformBrowser(this.platformId)) {
-      const userToken = localStorage.getItem('userToken');
-      return !!userToken;
-    }
-    return false;
+  logout():void{
+    this.token = null;
+    localStorage.removeItem('userToken');
+    this.router.navigate(['/candidate/login'])
   }
+
+  getToken(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      if (!this.token) {
+        this.token = localStorage.getItem('userToken');
+      }
+    }
+    return this.token;
+  }
+  
+
+  isLoggedIn(): boolean {
+    if (isPlatformBrowser(this.platformId)) {
+      const token = this.getToken();
+      const isTrue =  token ? !this.jwtHelper.isTokenExpired(token) : false;
+      console.log(isTrue);
+      return isTrue
+      
+    }
+    return false;  // default to not logged in if not in browser context
+  }
+
+
 
 
 
@@ -46,8 +70,10 @@ export class userService {
   }
 
   profile(candidateData: FormData): Observable<any> {
+    console.log(candidateData);
+    
     return this.http.post(`${this.apiKey}/profile`, candidateData);
-  }
+}
 
   getJobByJobID(job_id:string):Observable<any>{
     return this.http.get<any>(`${this.apiKey}/apply-job/${job_id}`)
@@ -69,15 +95,17 @@ export class userService {
     return this.http.post(`${this.apiKey}/reset-password`,body)
   }
 
-  getJobs(): Observable<Job[]> {
-    return this.http.get<Job[]>(`${this.apiKey}/home`);
+  getJobsForCandidate(candidateId: string): Observable<Job[]> {
+    return this.http.get<Job[]>(`${this.apiKey}/${candidateId}/home`);
   }
 
-
-  logout():void{
-    localStorage.removeItem('userToken');
-    this.router.navigate(['/candidate/login'])
+  applyJob(jobId:string,userId:string):Observable<any>{
+    const body = {jobId,userId}
+    return this.http.post<any>(`${this.apiKey}/apply-job`, body);
   }
 
+  getJobApplications(userId: any): Observable<any> {
+    return this.http.get<any>(`${this.apiKey}/applied-jobs/${userId}`);
+  }
   
 }

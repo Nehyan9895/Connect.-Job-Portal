@@ -77,4 +77,4 @@ const candidateSchema = new Schema<ICandidate>({
     },
 });
 
-export const Candidate = mongoose.model<ICandidate>('Candidate', candidateSchema);
+export const Candidate = mongoose.model('Candidate', candidateSchema);

@@ -47,6 +47,7 @@ export class LoginComponent {
           console.log(response,'reseress');
           localStorage.setItem('userToken',response.token)
           const user = response.user
+          localStorage.setItem('user_id',user.id)
           this.toastr.success(response.message,'Success')
           if(user.is_done){
           this.router.navigate(['/candidate/home'])

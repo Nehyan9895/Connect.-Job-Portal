@@ -21,8 +21,8 @@ export class RecruiterHomeComponent implements OnInit {
 block() {
 throw new Error('Method not implemented.');
 }
-    jobs: Job[] = [];
-    displayedJobs: Job[] = [];
+    jobs: any[] = [];
+    displayedJobs: any[] = [];
     length = 0;
     pageSize = 2;
     pageIndex = 0;
@@ -33,8 +33,11 @@ throw new Error('Method not implemented.');
     constructor(private recruiterService: RecruiterService, private toastr: ToastrService,private router:Router) {}
 
     ngOnInit(): void {
-      this.recruiterService.getJobs().subscribe((data) => {
-        this.jobs = data;
+      const recruiter_id:string = localStorage.getItem('recruiter_id') as string
+      this.recruiterService.getJobs(recruiter_id).subscribe((data) => {
+        this.jobs = data.data;
+        console.log(data.data);
+        
         this.length = this.jobs.length;
         this.updateDisplayedJobs();
       });

@@ -10,20 +10,25 @@ import { ForgetPasswordComponent } from "../components/shared/forget-password/fo
 import { ChangePasswordComponent } from "../components/shared/change-password/change-password.component";
 import path from "path";
 import { ApplyJobComponent } from "../components/candidate/apply-job/apply-job.component";
+import { userFalseAuth } from "../guard/user-false-auth.guard";
+import { AppliedJobsComponent } from "../components/candidate/applied-jobs/applied-jobs.component";
 
 export const candidateRoute : Routes = [
     {
         path:'landing_page',
         component: LandingPageComponent,
+        canActivate:[userFalseAuth]
     },
     {
         path:'',
         component: LandingPageComponent,
+        canActivate:[userFalseAuth]
 
     },
     {
         path:'candidate/login',
-        component:LoginComponent
+        component:LoginComponent,
+        canActivate:[userFalseAuth]
     },
     {
         path:'candidate/signup',
@@ -54,6 +59,11 @@ export const candidateRoute : Routes = [
     {
         path:'candidate/apply-job',
         component:ApplyJobComponent,
+        canActivate:[userAuthGuard]
+    },
+    {
+        path:'candidate/applied-jobs',
+        component:AppliedJobsComponent,
         canActivate:[userAuthGuard]
     }
 ]

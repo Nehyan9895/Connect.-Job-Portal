@@ -37,8 +37,8 @@ export class RecruiterService {
     return this.http.post(`${this.apiKey}/create-job`,data)
   }
 
-  getJobs(): Observable<any> {
-    return this.http.get<any>(`${this.apiKey}/home`);
+  getJobs(userId:string): Observable<any> {
+    return this.http.get<any>(`${this.apiKey}/home/${userId}`);
   }
 
   getJobByJobID(job_id:string):Observable<any>{

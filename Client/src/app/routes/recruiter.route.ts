@@ -5,6 +5,7 @@ import { recruiterAuthGuard } from "../guard/recruiter-auth.guard";
 import { RecruiterProfileComponent } from "../components/recruiter/recruiter-profile/recruiter-profile.component";
 import { CreateJobComponent } from "../components/recruiter/create-job/create-job.component";
 import { EditJobComponent } from "../components/recruiter/edit-job/edit-job.component";
+import { MessagesComponent } from "../components/recruiter/messages/messages.component";
 
 export const recruiterRoute : Routes = [
     {
@@ -30,5 +31,10 @@ export const recruiterRoute : Routes = [
         path:'recruiter/edit-job',
         component:EditJobComponent,
         canActivate:[recruiterAuthGuard]
+    },
+    {
+        path: 'recruiter/chat/:id',
+        component: MessagesComponent,
+        canActivate: [recruiterAuthGuard]
     }
 ]

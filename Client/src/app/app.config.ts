@@ -32,6 +32,11 @@ export const appConfig: ApplicationConfig = {
       toastClass: 'ngx-toastr',
       positionClass: 'toast-top-right',
       preventDuplicates: true,
+      progressBar: true, 
+      timeOut: 3000, 
+      progressAnimation: 'decreasing' 
+
     }), provideAnimationsAsync(), provideAnimationsAsync(),
+    
   ]
 };

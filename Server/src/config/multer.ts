@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 
 
 export const imageFilter = (req:Request,file:Express.Multer.File,cb:CallableFunction)=>{
-    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif|svg)$/)) {
         return cb((new Error('You can only upload Images')),false) 
     }
     cb(null,true)

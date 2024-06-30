@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, model, signal } from '@angular/core';
 import { FooterComponent } from '../shared/footer/footer.component';
 import { userService } from '../../../services/users/user.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
@@ -7,6 +7,13 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { HeaderComponent } from '../shared/header/header.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatAutocompleteModule, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {MatChipInputEvent, MatChipsModule} from '@angular/material/chips';
+import {MatIconModule} from '@angular/material/icon';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { allSkills } from '../../../constants/skills.constant';
+
 
 @Component({
     selector: 'app-user-personal-profile',
@@ -21,52 +28,65 @@ import { HeaderComponent } from '../shared/header/header.component';
         ToastrModule,
         ReactiveFormsModule,
         HeaderComponent,
-    ]
+        MatFormFieldModule, 
+        MatChipsModule, 
+        MatIconModule,
+        MatAutocompleteModule
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserPersonalProfileComponent implements OnInit{
+
+
+export class UserPersonalProfileComponent implements OnInit {
   profileForm: FormGroup;
   currentStep: number = 1;
-  selectedFile:File|undefined
+  selectedFile: File | undefined;
   selectedFileName: string | null = null;
   imagePreview: string | null = null;
 
+  allSkills = allSkills
+  currentSkill = new FormControl('');
+  filteredSkills: string[] = this.allSkills;
 
   constructor(
     private fb: FormBuilder,
-    private toastr:ToastrService,
-    private router:Router,
-    private userBackend:userService
+    private toastr: ToastrService,
+    private router: Router,
+    private userBackend: userService,
+    private announcer: LiveAnnouncer
   ) {
     this.profileForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-Z ]+$/)]],
-      phone: ['', [Validators.required,Validators.minLength(10),Validators.maxLength(10),Validators.pattern('^[0-9]*$')]],
+      phone: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(10), Validators.pattern('^[0-9]*$')]],
       dob: ['', Validators.required],
       upload: [null, Validators.required],
       gender: ['', Validators.required],
       qualification: ['', Validators.required],
-      specialization: ['',Validators.required],
-      institution: ['',Validators.required],
+      specialization: ['', Validators.required],
+      institution: ['', Validators.required],
       passoutYear: ['', [Validators.pattern('^[0-9]{4}$')]],
-      passoutMonth: ['',Validators.required],
+      passoutMonth: ['', Validators.required],
       isFresher: [false, Validators.required],
       jobRole: ['', Validators.required],
       companyName: ['', Validators.required],
       experienceDuration: [0, [Validators.required, Validators.min(0)]],
-      skills: this.fb.array([],Validators.required) ,
-      newSkill: [''] 
+      skills: this.fb.array([], Validators.required),
+      newSkill: ['']
     });
 
+    this.currentSkill.valueChanges.subscribe(value => this.filterSkills(value ?? ''));
   }
 
   ngOnInit(): void {}
 
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
+  onFileSelected(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const file = inputElement.files?.item(0);
+
     if (file) {
       this.selectedFile = file;
       this.selectedFileName = file.name;
 
-      // Show image preview
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreview = reader.result as string;
@@ -80,94 +100,107 @@ export class UserPersonalProfileComponent implements OnInit{
     }
   }
 
-
-
-
-
-
-  newSkill(): FormControl {
-    return this.fb.control('', Validators.required);
-  }
-
-  // Getter for easy access to skills FormArray
   get skills(): FormArray {
     return this.profileForm.get('skills') as FormArray;
   }
 
-  // Method to add a skill
-  addSkill(): void {
-    const newSkill = this.profileForm.get('newSkill') as FormControl;
-    if (newSkill.valid) {
-      this.skills.push(new FormControl(newSkill.value, Validators.required));
-      newSkill.reset();
+  addSkillFromInput(event?: MatChipInputEvent): void {
+    const inputElement = event?.chipInput.inputElement;
+    const value: string = (event?.value || this.currentSkill.value || '').trim();
+
+    if (value && !this.skills.controls.some(control => control.value.toLowerCase() === value.toLowerCase())) {
+      this.skills.push(new FormControl(value, Validators.required));
+      this.currentSkill.setValue('');
+    }
+
+    event?.chipInput!.clear();
+    if (inputElement) {
+      inputElement.value = '';
     }
   }
 
-  // Method to remove a skill
   removeSkill(index: number): void {
-    this.skills.removeAt(index);
+    if (index >= 0) {
+      this.skills.removeAt(index);
+      this.announcer.announce(`Removed skill at index ${index}`);
+    }
   }
 
-  nextStep() {
+  selected(event: MatAutocompleteSelectedEvent): void {
+    const value = event.option.viewValue;
+    if (!this.skills.controls.some(control => control.value.toLowerCase() === value.toLowerCase())) {
+      this.skills.push(new FormControl(value, Validators.required));
+    }
+    this.currentSkill.setValue('');
+  }
+
+  filterSkills(value: string): void {
+    const filterValue = value.toLowerCase();
+    this.filteredSkills = this.allSkills.filter(skill => skill.toLowerCase().includes(filterValue));
+  }
+
+
+
+  nextStep(): void {
     if (this.currentStep < 4) {
       this.currentStep++;
     }
   }
 
-  previousStep() {
+  previousStep(): void {
     if (this.currentStep > 1) {
       this.currentStep--;
     }
   }
 
-  
-
   getYearOptions(): number[] {
     const startYear = 1990;
     const endYear = new Date().getFullYear();
     let years = [];
-    for (let year = startYear; year <= 2024; year++) {
+    for (let year = startYear; year <= endYear; year++) {
       years.push(year);
     }
     return years;
   }
 
-  candidateProfile() {
+  candidateProfile(): void {
+    if (this.profileForm.invalid) {
+      this.toastr.error('Please fill in all required fields correctly.', 'Error');
+      return;
+    }
+  
     const email = localStorage.getItem('candidateEmail');
     if (email) {
-        const formData = new FormData();
-        formData.append('email', email);
-
-        // Append each form control value to FormData
-        for (const key in this.profileForm.value) {
-            if (key === 'upload' && this.selectedFile) {
-                formData.append('upload', this.selectedFile);
-            } else if (key === 'skills') {
-                this.profileForm.value[key].forEach((skill: string, index: number) => {
-                    formData.append(`candidateData[skills][${index}]`, skill);
-                });
-            } else {
-                formData.append(`candidateData[${key}]`, this.profileForm.value[key]);
-            }
+      const formData = new FormData();
+      formData.append('email', email);
+  
+      // Stringify candidateData
+      const candidateData = JSON.stringify(this.profileForm.value);
+      formData.append('candidateData', candidateData);
+  
+      // Append file if selected
+      if (this.selectedFile) {
+        formData.append('upload', this.selectedFile);
+      }
+  
+      // Log the FormData for debugging
+      console.log(formData);
+  
+      // Send the request to backend
+      this.userBackend.profile(formData).subscribe({
+        next: (response) => {
+          this.toastr.success(response.message, 'Success');
+          this.router.navigate(['/candidate/home']);
+        },
+        error: (error) => {
+          this.toastr.error(error.error.message, 'Error');
+          console.error(error);
         }
-
-        this.userBackend.profile(formData).subscribe({
-            next: (response) => {
-                console.log(response);
-                this.toastr.success(response.message, 'Success');
-                this.router.navigate(['/candidate/home']);
-            },
-            error: (error) => {
-                this.toastr.error(error.error.error, 'Error');
-                console.error(error);
-            }
-        });
+      });
     } else {
-        console.log("Form is not valid or there is no email");
+      this.toastr.error('Email not found. Please login again.', 'Error');
     }
-}
-
-
-
-
+  }
+  
+  
 }

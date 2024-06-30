@@ -1,7 +1,7 @@
 import { userRepository } from "../repositories/userRepository";
 import { candidateRepository } from "../repositories/candidateRepository";
-import { otpService } from "../functions/otpService";
-import imageUpload from "../functions/imageUpload";
+import { otpService } from "../helpers/otpService";
+import imageUpload from "../helpers/imageUpload";
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
@@ -11,6 +11,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'myjwtsecret';
 
 class UserService {
     async signup(userData: any) {
+        console.log(typeof userData);
+        
         const existingUser = await userRepository.findUserByEmail(userData.email);
         if (existingUser) {
             throw new Error('This user already exists');
@@ -103,7 +105,6 @@ class UserService {
 
      
         const isPasswordValid = await bcrypt.compare(password,user.password)
-        console.log(isPasswordValid);
         
         if(!isPasswordValid){
             throw new Error('Invalid email or password')
@@ -116,19 +117,20 @@ class UserService {
         return {token,user:{email:user.email,id:user._id,username:user.username,is_done:user.is_done},message:'Candidate login successful'}
     }
 
-
+    
     async createProfile(email: string, profileData: any, file?: Express.Multer.File): Promise<any> {
         const user = await userRepository.findUserByEmail(email);
-    
-        if (!user||user.isEmployee) {
+        
+        if (!user || user.isEmployee) {
             throw new Error('User not found');
         }
+        
         const userId = user._id.toString();
-    
+        
         if (!profileData) {
             throw new Error('Profile data is missing');
         }
-    
+        
         // Extract candidate data
         const candidateData = {
             user_id: userId,
@@ -152,46 +154,41 @@ class UserService {
             }],
             skills: profileData.skills
         };
-    
+        
         // Create candidate in database
         const candidate = await candidateRepository.createCandidate(candidateData);
-    
+        
         // Upload image if file is provided
         if (file && file.path) {
             try {
                 const imageUrl = await imageUpload.uploadImage(file.path, userId);
-                if(imageUrl){
-                await candidateRepository.updateCandidateImage(userId, imageUrl);
-                }else{
-                    console.log('image url is not good');
-                    
+                if (imageUrl) {
+                    await candidateRepository.updateCandidateImage(userId, imageUrl);
                 }
                 candidate.image = imageUrl;
             } catch (error) {
                 if (error instanceof Error) {
-                    console.error('Error uploading image:', error.message);
                     throw new Error('Error uploading image: ' + error.message);
                 } else {
-                    console.error('Unknown error uploading image:', error);
                     throw new Error('Unknown error uploading image');
                 }
             }
         }
-    
+        
         // Update user as done
         if (candidate) {
             await userRepository.updateUserIsDone(userId);
         }
-    
-        return {candidate,message:'Profile added successfully'};
+        
+        return { candidate, message: 'Profile added successfully' };
     }
+    
     
     
 
 
 
     async sendForgotOtp(email:string){
-        console.log(email,'dsfadeasss');
         
         const otp = this.generateOtp();
         await otpService.sendOtp(email, otp);

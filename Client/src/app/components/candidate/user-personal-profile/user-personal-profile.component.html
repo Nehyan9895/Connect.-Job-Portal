@@ -200,25 +200,30 @@
 
                 <div  *ngIf="currentStep === 4">
                   <div class="w-full my-8 p-8 items-center bg-white rounded-2xl shadow-xl overflow-hidden sm:max-w-4xl hover:shadow-xl ">
-                    <h2 class="text-2xl font-semibold mb-6 text-purple-700">Skills</h2>
-                    <form [formGroup]="profileForm" (ngSubmit)="candidateProfile()">
-                      <div class="flex flex-col items-center mt-1 text-sm sm:flex-row sm:space-y-0 sm:space-x-4">
-                        <div class="w-full sm:mb-2">
-                          <label for="skillInput">
-                            <span class="ml-2 text-sm text-black-800 sm:text-base dark:text-black-200">What are your skills?</span>
-                            <input id="skillInput" formControlName="newSkill" minlength="3"
-                              class="mt-1 py-3 px-5 w-full border-2 border-purple-300 rounded-2xl outline-none placeholder:text-gray-400 invalid:text-pink-700 invalid:focus:ring-pink-700 invalid:focus:border-pink-700 peer  dark:placeholder:text-gray-300 dark:invalid:text-pink-300 dark:border-gray-400"
-                              type="text" placeholder="Type a skill" />
-                            <p class="ml-2 text-xs text-pink-700 invisible peer-invalid:visible dark:text-gray-200">Must be at least 3 characters</p>
-                          </label>
-                        </div>
-                        <div
-                          class="w-full text-center py-3 px-8 text-sm font-medium bg-purple-500 text-gray-100 rounded-2xl cursor-pointer sm:w-min hover:bg-purple-700 hover:text-gray-50 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-50 mb-4 sm:mb-0"
-                          (click)="addSkill()">
-                          <span>Add</span>
-                        </div>
-                      </div>
-                    </form>
+                    <mat-form-field class="example-chip-list">
+                      <mat-label>Skills</mat-label>
+                      <mat-chip-grid #chipGrid aria-label="Skill selection">
+                        <mat-chip-row *ngFor="let skill of skills.controls; let i = index" (removed)="removeSkill(i)">
+                          {{ skill.value }}
+                          <button matChipRemove [attr.aria-label]="'remove ' + skill.value">
+                            <mat-icon>cancel</mat-icon>
+                          </button>
+                        </mat-chip-row>
+                      </mat-chip-grid>
+                      <input
+                        placeholder="New skill..."
+                        #skillInput
+                        [formControl]="currentSkill"
+                        [matChipInputFor]="chipGrid"
+                        [matAutocomplete]="auto"
+                        (matChipInputTokenEnd)="addSkillFromInput()"
+                      />
+                      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                        <mat-option *ngFor="let filteredSkill of filteredSkills" [value]="filteredSkill">
+                          {{ filteredSkill }}
+                        </mat-option>
+                      </mat-autocomplete>
+                    </mat-form-field>
                     <div class='px-2 pt-2 pb-11 mb-3 flex flex-wrap rounded-lg bg-purple-200 dark:bg-gray-400'>
                       <ng-container *ngFor="let skill of skills.value; let i = index">
                         <span
@@ -251,6 +256,7 @@
                   </button>
                 </div>
               </form>
+              
               
               
             </div>

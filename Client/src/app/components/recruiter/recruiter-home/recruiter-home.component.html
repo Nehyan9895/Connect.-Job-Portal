@@ -10,37 +10,38 @@
           </div>
           <section>
             <h2 class="text-xl font-bold mb-4">Jobs</h2>
-            <div *ngFor="let job of displayedJobs" class="bg-gray-100 p-4 rounded-lg mb-6">
+            <div *ngFor="let jobData of displayedJobs" class="bg-gray-100 p-4 rounded-lg mb-6">
               <div class="flex flex-col md:flex-row justify-between mb-2">
-                <h3 class="text-lg font-medium">{{ job.job_title }}</h3>
+                <h3 class="text-lg font-medium">{{ jobData.job_title }}</h3>
                 <div class="flex space-x-2 mt-2 md:mt-0">
                   <button class="bg-[#D3A8FF] text-[#333] py-1 px-3 rounded-md" (click)="block()">De-activate</button>
-                  <button class="bg-[#D3A8FF] text-[#333] py-1 px-3 rounded-md" (click)="getJobById(job.job_id)">Edit</button>
+                  <button class="bg-[#D3A8FF] text-[#333] py-1 px-3 rounded-md" (click)="getJobById(jobData.job_id)">Edit</button>
                 </div>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div><strong>Job Code:</strong> {{ job.job_id }}</div>
-                <div><strong>Location:</strong> {{ job.job_location }}</div>
-                <div><strong>Job Type:</strong> {{ job.job_type }}</div>
-                <div><strong>Salary:</strong> {{ job.salary_range_min }} - {{ job.salary_range_max }} in LPA</div>
+                <div><strong>Job Code:</strong> {{ jobData.job_id }}</div>
+                <div><strong>Location:</strong> {{ jobData.job_location }}</div>
+                <div><strong>Job Type:</strong> {{ jobData.job_type }}</div>
+                <div><strong>Salary:</strong> {{ jobData.salary_range_min }} - {{ jobData.salary_range_max }} in LPA</div>
                 <div>
                   <strong>Skills:</strong>
                   <div class="flex flex-wrap gap-2 mt-2 md:mt-0">
-                    <span *ngFor="let skill of job.skills_required" class="bg-[#00EFFF] text-white py-1 px-2 rounded-md text-sm font-medium">{{ skill }}</span>
+                    <span *ngFor="let skill of jobData.skills_required" class="bg-[#00EFFF] text-white py-1 px-2 rounded-md text-sm font-medium">{{ skill }}</span>
                   </div>
                 </div>
-                <div><strong>Experience:</strong> {{ job.experience_required }} Years</div>
-                <div><strong>Last Date:</strong> {{ job.last_date | date:'MM/dd/yyyy' }}</div>
+                <div><strong>Experience:</strong> {{ jobData.experience_required }} Years</div>
+                <div><strong>Last Date:</strong> {{ jobData.last_date | date:'MM/dd/yyyy' }}</div>
               </div>
-              <!-- <div class="mt-4"><strong>Applications Received:</strong> {{ job.applications_received }}</div> -->
             </div>
             <mat-paginator
-  [length]="length"
-  [pageSize]="pageSize"
-  [pageSizeOptions]="pageSizeOptions"
-  (page)="handlePageEvent($event)">
-</mat-paginator>
+              [length]="length"
+              [pageSize]="pageSize"
+              [pageSizeOptions]="pageSizeOptions"
+              (page)="handlePageEvent($event)">
+            </mat-paginator>
           </section>
+          
+          
           
         </main>
       </div>

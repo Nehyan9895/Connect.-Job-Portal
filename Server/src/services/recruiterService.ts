@@ -1,4 +1,4 @@
-import imageUpload from "../functions/imageUpload";
+import imageUpload from "../helpers/imageUpload";
 import { recruiterRepository } from "../repositories/recruiterRepository";
 import { userRepository } from "../repositories/userRepository";
 import bcrypt from 'bcryptjs'
@@ -10,7 +10,7 @@ class RecruiterService{
 
     async recruiterLogin(email:string,password:string){
         const recruiter  = await recruiterRepository.findRecruiterByEmail(email);
-
+        
         if(!recruiter){
             throw new Error('Recruiter not exists')
         }

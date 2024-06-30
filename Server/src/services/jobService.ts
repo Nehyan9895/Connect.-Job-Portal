@@ -1,12 +1,16 @@
+import mongoose from "mongoose";
+import { ICandidate } from "../models/candidateModel";
+import { IJob } from "../models/jobModel";
 import { jobRepository } from "../repositories/jobRepository";
 import { recruiterRepository } from "../repositories/recruiterRepository";
 import { userRepository } from "../repositories/userRepository";
+import { candidateRepository } from "../repositories/candidateRepository";
+import { jobApplicationRepository } from "../repositories/jobApplicationRepository";
 
 
 class JobService{
    
     async createJob(email:string,jobData:any){
-        console.log(email,'emailslsl');
         
         const user = await userRepository.findUserByEmail(email);
     
@@ -44,7 +48,6 @@ class JobService{
             responsibilities:jobData.responsibilities,
             preference:jobData.preference
         }
-        console.log(newJobData,'this is new new new');
         
 
         const job = await jobRepository.createJob(newJobData);
@@ -52,9 +55,53 @@ class JobService{
         return {job,message:'Job created successfully'}
     }
 
-    async getAllJobs() {
-        return await jobRepository.findAllJobs();
+
+
+    calculateMatchScore(job: IJob, candidate: ICandidate): number {
+        const jobSkills = new Set(job.skills_required);
+        const candidateSkills = new Set(candidate.skills);
+        const commonSkills = new Set([...jobSkills].filter(skill => candidateSkills.has(skill)));
+
+        const totalSkills = jobSkills.size;
+        const matchedSkills = commonSkills.size;
+
+        return totalSkills ? (matchedSkills / totalSkills) * 100 : 0;
     }
+
+    
+
+    async getJobsForCandidate(candidateId: string) {
+        if (!mongoose.Types.ObjectId.isValid(candidateId)) {
+            throw new Error('Invalid candidate ID format');
+        }
+    
+        const candidate = await candidateRepository.findCandidateByUserId(candidateId);
+        if (!candidate) {
+            throw new Error('Candidate not found');
+        }
+    
+        const jobs = await jobRepository.findAllJobs();
+        const jobIds: mongoose.Types.ObjectId[] = jobs.map(job => job._id as mongoose.Types.ObjectId);
+    
+        // Fetch applications for these jobs
+        const applications = await jobApplicationRepository.findApplicationsByJobIds(jobIds);
+        console.log(applications,'appli');
+        
+        // Map jobs with application status
+        const jobsWithMatchScore = jobs.map(job => {
+            const matchScore = this.calculateMatchScore(job, candidate);
+            const applied = applications.some(application =>
+                application.job_id.toString() === (job._id as mongoose.Types.ObjectId).toString() &&
+                application.candidate_id.toString() === (candidate._id as mongoose.Types.ObjectId).toString()
+            );
+            return { job, matchScore, applied };
+        });
+    
+        return jobsWithMatchScore.sort((a, b) => b.matchScore - a.matchScore);
+    }
+    
+
+
 
     async getAllJobsByRecruiterId(user_id: string) {
         const recruiter = await recruiterRepository.findRecruiterByUserId(user_id);

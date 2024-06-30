@@ -53,6 +53,7 @@ export class SignupComponent {
 
   signupUser(){
     console.log('clicked',typeof this.userForm.value);
+    localStorage.setItem('email',this.userForm.value.email)
     
     this.userService.signup(this.userForm.value).subscribe({
       next: (response)=>{

@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from "../shared/header/header.component";
 import { FooterComponent } from "../shared/footer/footer.component";
 import { Job } from '../../../models/job.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RecruiterService } from '../../../services/recruiter/recruiter.service';
 import { CommonModule } from '@angular/common';
 import { userService } from '../../../services/users/user.service';
+import { response } from 'express';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-apply-job',
@@ -14,27 +16,45 @@ import { userService } from '../../../services/users/user.service';
     styleUrl: './apply-job.component.scss',
     imports: [HeaderComponent, FooterComponent,CommonModule]
 })
-export class ApplyJobComponent implements OnInit{
-    job!: Job;
-    
 
+export class ApplyJobComponent implements OnInit {
+    job!: any; // Adjust the type as per your Job interface
+    userId: any = localStorage.getItem('user_id');
+  
     constructor(
       private route: ActivatedRoute,
-      private userService:userService
+      private userService: userService,
+      private router: Router,
+      private toastr: ToastrService
     ) { }
   
     ngOnInit(): void {
-      const jobId = localStorage.getItem('job_id')
-      
-      if(jobId){
-      this.userService.getJobByJobID(jobId).subscribe(
-        (job) => {
-            this.job = job
+      const jobId = localStorage.getItem('job_id');
+  
+      if (jobId) {
+        this.userService.getJobByJobID(jobId).subscribe(
+          (job) => {
+            this.job = job;
+          },
+          error => {
+            console.error('Failed to fetch job details', error);
+          }
+        );
+      }
+    }
+  
+    applyJob(job_id: string): void {
+      this.userService.applyJob(job_id, this.userId).subscribe({
+        next: (response) => {
+          console.log(response);
+          this.toastr.success(response.message, 'Success');
+          this.router.navigate(['/candidate/home']);
         },
-        error => {
-            console.error('Failed to fetch job details', error)
+        error: (error) => {
+          this.toastr.error(error.error.error, 'Error');
+          console.error(error);
         }
-      );
+      });
     }
-    }
-}
+  }
+  
