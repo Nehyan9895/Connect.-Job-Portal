@@ -28,11 +28,11 @@ export class HomeComponent implements OnInit {
   constructor(private userService: userService, private toastr: ToastrService, private router: Router) {}
 
   ngOnInit(): void {
-    const candidateId = localStorage.getItem('user_id'); // Replace with actual candidate ID
+    const candidateId = localStorage.getItem('user_id'); 
     if (candidateId) {
       this.userService.getJobsForCandidate(candidateId).subscribe((data) => {
         console.log(data);
-        this.jobs = data;
+        this.jobs = data.data;
         this.length = this.jobs.length;
         this.updateDisplayedJobs();
       });

@@ -2,6 +2,7 @@ import { userRepository } from "../repositories/userRepository";
 import { candidateRepository } from "../repositories/candidateRepository";
 import { otpService } from "../helpers/otpService";
 import imageUpload from "../helpers/imageUpload";
+import fileUpload from "../helpers/fileUpload";
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
@@ -118,7 +119,7 @@ class UserService {
     }
 
     
-    async createProfile(email: string, profileData: any, file?: Express.Multer.File): Promise<any> {
+    async createProfile(email: string, profileData: any, imageFile?: Express.Multer.File, resumeFile?: Express.Multer.File): Promise<any> {
         const user = await userRepository.findUserByEmail(email);
         
         if (!user || user.isEmployee) {
@@ -131,13 +132,13 @@ class UserService {
             throw new Error('Profile data is missing');
         }
         
-        // Extract candidate data
         const candidateData = {
             user_id: userId,
             fullName: profileData.fullName,
             phone: profileData.phone,
             dob: profileData.dob,
             image: '',
+            resume: '',
             gender: profileData.gender,
             education: [{
                 qualification: profileData.qualification,
@@ -155,33 +156,43 @@ class UserService {
             skills: profileData.skills
         };
         
-        // Create candidate in database
         const candidate = await candidateRepository.createCandidate(candidateData);
         
-        // Upload image if file is provided
-        if (file && file.path) {
+        if (imageFile && imageFile.path) {
             try {
-                const imageUrl = await imageUpload.uploadImage(file.path, userId);
+                const imageUrl = await imageUpload.uploadImage(imageFile.path, userId);
                 if (imageUrl) {
                     await candidateRepository.updateCandidateImage(userId, imageUrl);
+                    candidate.image = imageUrl;
                 }
-                candidate.image = imageUrl;
             } catch (error) {
                 if (error instanceof Error) {
                     throw new Error('Error uploading image: ' + error.message);
                 } else {
-                    throw new Error('Unknown error uploading image');
+                    throw new Error('An unknown error occurred while uploading the image');
                 }
             }
         }
-        
-        // Update user as done
-        if (candidate) {
-            await userRepository.updateUserIsDone(userId);
+    
+        if (resumeFile && resumeFile.path) {
+            try {
+                const resumeUrl = await fileUpload.uploadFile(resumeFile.path, userId);
+                if (resumeUrl) {
+                    await candidateRepository.updateCandidateResume(userId, resumeUrl);
+                    candidate.resume = resumeUrl;
+                }
+            } catch (error) {
+                if (error instanceof Error) {
+                    throw new Error('Error uploading resume: ' + error.message);
+                } else {
+                    throw new Error('An unknown error occurred while uploading the resume');
+                }
+            }
         }
-        
-        return { candidate, message: 'Profile added successfully' };
+        await userRepository.updateUserIsDone(userId)
+        return candidate;
     }
+    
     
     
     

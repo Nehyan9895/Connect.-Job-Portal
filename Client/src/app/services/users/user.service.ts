@@ -95,8 +95,8 @@ export class userService {
     return this.http.post(`${this.apiKey}/reset-password`,body)
   }
 
-  getJobsForCandidate(candidateId: string): Observable<Job[]> {
-    return this.http.get<Job[]>(`${this.apiKey}/${candidateId}/home`);
+  getJobsForCandidate(candidateId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiKey}/${candidateId}/home`);
   }
 
   applyJob(jobId:string,userId:string):Observable<any>{

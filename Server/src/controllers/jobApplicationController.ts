@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { jobApplicationService } from "../services/jobApplicationService";
 import { createErrorResponse, createSuccessResponse } from "../helpers/responseHelper";
+import mongoose from "mongoose";
 
 
 
@@ -45,15 +46,18 @@ class JobApplicationController {
         }
     }
 
-    async getJobApplicationByRecruiter(req: Request, res: Response) {
+    async getJobApplicationByJob(req: Request, res: Response) {
         try {
-            const recruiterId = req.params.id;
+            const jobId  = req.params.id;
+            
 
-            if (!recruiterId) {
-                return res.status(400).json(createErrorResponse('Recruiter ID required'));
+            if (!jobId) {
+                return res.status(400).json(createErrorResponse('job ID required'));
             }
 
-            const applications = await jobApplicationService.getJobApplicationsByRecruiter(recruiterId);
+            const applications = await jobApplicationService.getApplicationsForJob(new mongoose.Types.ObjectId(jobId));
+            console.log(applications);
+            
             res.status(200).json(createSuccessResponse(applications));
         } catch (err) {
             if (err instanceof Error) {

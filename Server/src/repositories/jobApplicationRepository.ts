@@ -21,6 +21,11 @@ class JobApplicationRepository {
     async findApplicationsByJobIds(jobIds: mongoose.Types.ObjectId[]) {
         return await JobApplication.find({ job_id: { $in: jobIds } })
     }
+
+    async findApplicationsByJobId(jobId: mongoose.Types.ObjectId) {
+        return await JobApplication.find({ job_id: jobId }).populate('job_id').populate('candidate_id');
+      }
+    
     
 
 }

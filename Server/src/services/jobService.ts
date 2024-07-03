@@ -85,7 +85,6 @@ class JobService{
     
         // Fetch applications for these jobs
         const applications = await jobApplicationRepository.findApplicationsByJobIds(jobIds);
-        console.log(applications,'appli');
         
         // Map jobs with application status
         const jobsWithMatchScore = jobs.map(job => {

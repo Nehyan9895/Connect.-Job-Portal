@@ -6,6 +6,12 @@ class RecruiterRepository{
         return await Recruiter.findOne({ user_id });
       }
     
+      async findRecruiterIdByUserId(user_id: string): Promise<string | null> {
+        const recruiter = await this.findRecruiterByUserId(user_id);
+        return recruiter ? recruiter._id.toString() : null;
+      }
+      
+      
 
     async findRecruiterByEmail(email:string){
         return await User.findOne({email:email,isEmployee:true})

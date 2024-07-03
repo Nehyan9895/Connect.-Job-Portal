@@ -8,13 +8,14 @@ import { ApplyJobComponent } from "./components/candidate/apply-job/apply-job.co
 import { AppliedJobsComponent } from "./components/candidate/applied-jobs/applied-jobs.component";
 import { ApplicationsComponent } from "./components/recruiter/applications/applications.component";
 import { MessagesComponent } from "./components/recruiter/messages/messages.component";
+import { JobApplicantsComponent } from './components/recruiter/job-applicants/job-applicants.component';
 
 @Component({
     selector: 'app-root',
     standalone: true,
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss',
-    imports: [RouterOutlet, RecruiterHomeComponent, RecruiterProfileComponent, CreateJobComponent, HomeComponent, ApplyJobComponent, AppliedJobsComponent, ApplicationsComponent, MessagesComponent]
+    imports: [RouterOutlet, RecruiterHomeComponent, RecruiterProfileComponent, CreateJobComponent, HomeComponent, ApplyJobComponent, AppliedJobsComponent, ApplicationsComponent, MessagesComponent, JobApplicantsComponent]
 })
 export class AppComponent {
   title = 'Client';

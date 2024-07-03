@@ -15,6 +15,7 @@ import {MatInputModule} from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { allSkills } from '../../../constants/skills.constant';
 
 
 
@@ -42,7 +43,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 })
 export class CreateJobComponent implements OnInit {
   jobForm: FormGroup;
-  allSkills: string[] = ['Angular', 'React', 'NgRx', 'TypeScript']; // Your skills array
+  allSkills = allSkills
   currentSkill = new FormControl('');
   filteredSkills: string[] = this.allSkills;
 

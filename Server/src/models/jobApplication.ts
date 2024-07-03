@@ -6,9 +6,8 @@ export interface IJobApplication extends Document{
     job_id:mongoose.Schema.Types.ObjectId;
     application_sent:boolean;
     application_reviewed:boolean;
-    interview:boolean;
-    selected:boolean;
-    rejected:boolean;
+    resume_viewed:boolean;
+    result:String
 }
 
 const jobApplicationSchema = new Schema<IJobApplication>({
@@ -30,18 +29,15 @@ const jobApplicationSchema = new Schema<IJobApplication>({
         type:Boolean,
         default:false
     },
-    interview:{
+    resume_viewed:{
         type:Boolean,
         default:false
     },
-    selected:{
-        type:Boolean,
-        default:false
-    },
-    rejected:{
-        type:Boolean,
-        default:false
-    },
+    result:{
+        type:String,
+        enum:['Result','Accepted','Rejected'],
+        default:'Result'
+    }
 })
 
 export const JobApplication = mongoose.model('JobApplication', jobApplicationSchema);

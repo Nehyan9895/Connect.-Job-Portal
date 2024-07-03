@@ -67,7 +67,7 @@ export class OtpPageComponent {
       this.userService.verifyOtp(this.otp, otpToken).subscribe({
         next: (response) => {
           console.log(response);
-          this.toaster.success(response.message, 'Success');
+          this.toaster.success(response.data.message, 'Success');
           if(isEmployee){
             this.router.navigate(['/candidate/login'])
           }else{

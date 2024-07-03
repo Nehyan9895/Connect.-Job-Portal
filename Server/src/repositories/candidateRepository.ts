@@ -21,7 +21,15 @@ class CandidateRepository{
         }
     }
 
-
+    async updateCandidateResume(userId: string, resumeUrl: string) {
+        const candidate = await this.findCandidateByUserId(userId);
+        if (candidate) {
+            candidate.resume = resumeUrl;
+            await candidate.save();
+        } else {
+            throw new Error("Candidate not found");
+        }
+    }
 
 
 }

@@ -1,0 +1,66 @@
+<app-recruiter-header></app-recruiter-header>
+
+<div class="flex flex-col md:flex-row">
+  <app-recruiter-sidebar class="w-1/5"></app-recruiter-sidebar>
+  <main class="flex-1 bg-white p-6 rounded-lg mt-4 md:mt-0 md:ml-4">
+    <div class="flex flex-col md:flex-row items-center mb-4">
+      <div class="flex-1 flex flex-col md:flex-row">
+        <!-- Your search inputs can be added here -->
+      </div>
+      <div class="bg-gray-200 p-4 rounded-lg shadow ml-auto mt-4 md:mt-0 md:ml-4">
+        <span class="block text-sm text-gray-600">Total Applications</span>
+        <span class="block text-xl font-bold text-gray-800">Received</span>
+        <span class="block text-2xl font-bold text-blue-600">{{ candidates.length }}</span>
+      </div>
+    </div>
+    <section>
+      <h2 class="text-xl font-bold mb-4">Candidates</h2>
+      <ng-container *ngIf="candidates.length === 0">
+        <p class="text-gray-500">No candidates found.</p>
+      </ng-container>
+      <div *ngFor="let candidate of candidates" class="bg-gray-100 p-4 rounded-lg mb-6">
+        <div class="flex flex-col mb-2">
+          <h3 class="text-lg font-medium">{{ candidate.candidate_id.fullName }}</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+          <div *ngIf="candidate.candidate_id.education.length > 0">
+            <strong>Qualification:</strong> {{ candidate.candidate_id.education[0].qualification }}
+          </div>
+          <div *ngIf="candidate.candidate_id.experience.length > 0 && !candidate.candidate_id.experience[0].isFresher">
+            <strong>Experience Duration:</strong> {{ candidate.candidate_id.experience[0].experienceDuration }} Months
+          </div>
+          <div>
+            <div class="flex flex-wrap gap-2 mt-2 md:mt-0">
+              <strong>Skills:</strong>
+              <span *ngFor="let skill of candidate.candidate_id.skills" class="bg-[#00EFFF] text-white py-1 px-2 rounded-md text-sm font-medium">{{ skill }}</span>
+            </div>
+          </div>
+          <a href="{{ candidate.candidate_id.resume }}" (click)="updateResumeViewed(candidate._id)" target="_blank" class="text-blue-600 hover:underline">View Resume</a>
+        </div>
+        <div class="flex justify-end mt-4">
+          <button class="bg-green-500 text-white py-2 px-4 rounded-lg mr-2" [disabled]="!candidate.resume_viewed">Accept</button>
+          <button class="bg-red-500 text-white py-2 px-4 rounded-lg mr-2" [disabled]="!candidate.resume_viewed">Reject</button>
+          <!-- Replace the button with a clickable icon -->
+          <div class="ml-auto">
+            <button class="text-blue-600 hover:text-blue-800" (click)="updateResumeViewed(candidate._id)">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <mat-paginator
+        *ngIf="candidates.length > 0"
+        [length]="length"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="handlePageEvent($event)">
+      </mat-paginator>
+    </section>
+    
+  </main>
+</div>
+
+<app-footer></app-footer>
+

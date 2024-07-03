@@ -2,13 +2,13 @@ import { CanActivateFn, Router } from '@angular/router';
 import { RecruiterService } from '../services/recruiter/recruiter.service';
 import { inject } from '@angular/core';
 
-export const recruiterAuthGuard: CanActivateFn = (route, state) => {
+export const recruiterFalseAuthGuard: CanActivateFn = (route, state) => {
   const backendService = inject(RecruiterService);
   const router = inject(Router)
-  if (backendService.isLoggedIn()) {
-    return true;
-  } else {
-    router.navigate(['/recruiter/login'])
+  if(backendService.isLoggedIn()){
+    router.navigate(['/recruiter/home']); 
     return false;
+  }else{
+     return true
   }
 };

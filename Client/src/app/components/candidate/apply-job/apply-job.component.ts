@@ -34,7 +34,7 @@ export class ApplyJobComponent implements OnInit {
       if (jobId) {
         this.userService.getJobByJobID(jobId).subscribe(
           (job) => {
-            this.job = job;
+            this.job = job.data;
           },
           error => {
             console.error('Failed to fetch job details', error);
@@ -47,7 +47,7 @@ export class ApplyJobComponent implements OnInit {
       this.userService.applyJob(job_id, this.userId).subscribe({
         next: (response) => {
           console.log(response);
-          this.toastr.success(response.message, 'Success');
+          this.toastr.success(response.data.message, 'Success');
           this.router.navigate(['/candidate/home']);
         },
         error: (error) => {

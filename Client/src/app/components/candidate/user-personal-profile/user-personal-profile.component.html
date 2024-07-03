@@ -60,7 +60,15 @@
                     </div>
                   
                 </div>
-                
+                <div class="mb-6">
+                  <label for="resume" class="block mb-2 text-gray-700">Upload Resume</label>
+                  <input #resumeInput hidden type="file" (change)="onResumeSelected($event)" accept="application/pdf">
+                  <button (click)="resumeInput.click()" class="bg-blue-700 py-2 px-4 rounded-md text-white">Add Resume</button>
+                  <div *ngIf="selectedResumeName">
+                      <p>Resume added: {{ selectedResumeName }}</p>
+                  </div>
+              </div>
+              
                   
                   <div class="mb-6">
                     <label class="block mb-2 text-gray-700">Gender</label>

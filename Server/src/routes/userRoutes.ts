@@ -12,7 +12,7 @@ router.post('/signup', userController.signup);
 router.post('/verify-otp', userController.verifyOtp);
 router.post('/resend-otp', userController.resendOtp);
 router.post('/login',userController.userLogin)
-router.post('/profile',upload.single('upload'),userController.createProfile)
+router.post('/profile', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }]), (req, res) => {userController.createProfile(req as any, res);})
 router.post('/forgot-password',userController.sendForgotOtp)
 router.post('/verify-forget-password',userController.verifyForgetOtp)
 router.post('/reset-password',userController.resetPassword);

@@ -8,119 +8,134 @@
     <div class="bg-[#f7f6f4] p-8 rounded-lg">
       <form class="space-y-4" [formGroup]="jobForm">
         <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label for="jobTitle" class="block text-gray-700 font-semibold mb-1">Job Title</label>
-            <input type="text" formControlName="job_title" name="job_title" id="jobTitle" placeholder="Job Title"
-              class="border border-gray-300 rounded-md p-2 w-full">
-            <div *ngIf="jobForm.get('job_title')?.invalid && jobForm.get('job_title')?.touched"
-              class="text-red-500 mt-1">Invalid title.
-            </div>
+          <div class="col-span-2 md:col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>Job Title</mat-label>
+              <input matInput formControlName="job_title" placeholder="Job Title">
+              <mat-error *ngIf="jobForm.get('job_title')?.invalid && jobForm.get('job_title')?.touched">
+                Invalid title.
+              </mat-error>
+            </mat-form-field>
           </div>
-          <div>
-            <label for="jobLocation" class="block text-gray-700 font-semibold mb-1">Job Location</label>
-            <input type="text" formControlName="job_location" name="job_location" id="jobLocation"
-              placeholder="Job Location" class="border border-gray-300 rounded-md p-2 w-full">
-            <div *ngIf="jobForm.get('job_location')?.invalid && jobForm.get('job_location')?.touched"
-              class="text-red-500 mt-1">Invalid title.
-            </div>
+          <div class="col-span-2 md:col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>Job Location</mat-label>
+              <input matInput formControlName="job_location" placeholder="Job Location">
+              <mat-error *ngIf="jobForm.get('job_location')?.invalid && jobForm.get('job_location')?.touched">
+                Invalid location.
+              </mat-error>
+            </mat-form-field>
           </div>
         </div>
+      
         <div class="grid grid-cols-4 gap-4">
-          <div>
-            <label for="Minimum" class="block text-gray-700 font-semibold mb-1">Salary Range In LPA (Minimum)</label>
-            <input type="number" formControlName="salary_range_min" name="salary_range_min" id="Minimum"
-              placeholder="Minimum" class="border border-gray-300 rounded-md p-2 w-full">
+          <div class="col-span-4 md:col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>Salary Range In LPA (Minimum)</mat-label>
+              <input matInput type="number" formControlName="salary_range_min" placeholder="Minimum">
+            </mat-form-field>
           </div>
-          <div>
-            <label for="Maximum" class="block text-gray-700 font-semibold mb-1">Maximum</label>
-            <input type="number" formControlName="salary_range_max" name="salary_range_max" id="Maximum"
-              placeholder="Maximum" class="border border-gray-300 rounded-md p-2 w-full">
+          <div class="col-span-4 md:col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>Maximum</mat-label>
+              <input matInput type="number" formControlName="salary_range_max" placeholder="Maximum">
+            </mat-form-field>
           </div>
-          <div class="col-span-2">
-            <label for="jobType" class="block text-gray-700 font-semibold mb-1">Job Type</label>
-            <select id="jobType" formControlName="job_type" name="job_type"
-              class="border border-gray-300 rounded-md p-2 w-full">
-              <option value="">Select</option>
-              <option value="full_time">Full Time</option>
-              <option value="part_time">Part Time</option>
-              <option value="contract_based">Contract Based</option>
-            </select>
+          <div class="col-span-4 md:col-span-2">
+            <mat-form-field class="w-full">
+              <mat-label>Job Type</mat-label>
+              <mat-select formControlName="job_type">
+                <mat-option value="">Select</mat-option>
+                <mat-option value="full_time">Full Time</mat-option>
+                <mat-option value="part_time">Part Time</mat-option>
+                <mat-option value="contract_based">Contract Based</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
         </div>
+      
         <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label for="job_mode" class="block text-gray-700 font-semibold mb-1">Job Mode</label>
-            <select id="job_mode" formControlName="job_mode" name="job_mode"
-              class="border border-gray-300 rounded-md p-2 w-full">
-              <option value="">Select</option>
-              <option value="remote">Work from Home</option>
-              <option value="office">Work from Office</option>
-              <option value="hybrid">Hybrid</option>
-            </select>
+          <div class="col-span-2 md:col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>Job Mode</mat-label>
+              <mat-select formControlName="job_mode">
+                <mat-option value="">Select</mat-option>
+                <mat-option value="remote">Work from Home</mat-option>
+                <mat-option value="office">Work from Office</mat-option>
+                <mat-option value="hybrid">Hybrid</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
-          <div>
-            <label for="experience_required" class="block text-gray-700 font-semibold mb-1">Experience Required (In Years)</label>
-            <select id="experience_required" formControlName="experience_required" name="experience_required"
-              class="border border-gray-300 rounded-md p-2 w-full">
-              <option value="fresher">Fresher</option>
-              <option *ngFor="let year of [1,2,3,4,5,6,7,8,9,10]" [value]="year">{{year}}</option>
-            </select>
+          <div class="col-span-2 md:col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>Experience Required (In Years)</mat-label>
+              <mat-select formControlName="experience_required">
+                <mat-option value="fresher">Fresher</mat-option>
+                <mat-option *ngFor="let year of [1,2,3,4,5,6,7,8,9,10]" [value]="year">{{year}}</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
         </div>
+      
         <div class="grid grid-cols-2 gap-4">
-          <div class="flex items-end">
-            <div class="flex-grow">
-              <label for="skills_required" class="block text-gray-700 font-semibold mb-1">Skills Required</label>
-              <input type="text" id="skills_required" formControlName="newSkill" placeholder="Skills Required"
-                class="border border-gray-300 rounded-md p-2 w-full">
-            </div>
-            <div
-              class="ml-4 py-2 px-4 text-sm font-medium bg-purple-500 text-gray-100 rounded-lg cursor-pointer hover:bg-purple-700 hover:text-gray-50 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-50"
-              (click)="addSkill()">
-              <span>Add</span>
-            </div>
+          <div class="col-span-2 md:col-span-1">
+            <mat-form-field class="example-chip-list w-full" formArrayName="skills">
+              <mat-label>Skills</mat-label>
+              <mat-chip-grid #chipGrid aria-label="Skill selection">
+                <mat-chip-row *ngFor="let skill of skills.controls; let i = index" (removed)="removeSkill(i)">
+                  {{ skill.value }}
+                  <button matChipRemove [attr.aria-label]="'remove ' + skill.value">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              </mat-chip-grid>
+              <input
+                placeholder="New skill..."
+                #skillInput
+                [formControl]="currentSkill"
+                [matChipInputFor]="chipGrid"
+                [matAutocomplete]="auto"
+                (matChipInputTokenEnd)="addSkillFromInput()"
+              />
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                <mat-option *ngFor="let filteredSkill of filteredSkills" [value]="filteredSkill">
+                  {{ filteredSkill }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
           </div>
-        
-          <div>
-            <label for="last_date" class="block text-gray-700 font-semibold mb-1">Apply Before</label>
-            <input type="date" id="last_date" placeholder="Apply Before" formControlName="last_date" name="last_date"
-              class="border border-gray-300 rounded-md p-2 w-full">
+          <div class="col-span-2 md:col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>Apply Before</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="last_date" placeholder="Apply Before">
+              <mat-hint>MM/DD/YYYY</mat-hint>
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
           </div>
         </div>
-        
-        <div class='px-2 pt-2 pb-3 mb-3 flex flex-wrap rounded-lg bg-purple-200 dark:bg-gray-400 w-1/2'>
-          <ng-container *ngFor="let skill of skills.controls; let i = index">
-            <span
-              class="flex flex-wrap pl-2 pr-1 py-1 m-1 justify-between items-center text-xs font-medium rounded-lg cursor-pointer bg-purple-500 text-gray-200 hover:bg-purple-600 hover:text-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-100">
-              {{ skill.value }}
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 hover:text-gray-300" viewBox="0 0 20 20"
-                fill="currentColor" (click)="removeSkill(i)">
-                <path fill-rule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clip-rule="evenodd" />
-              </svg>
-            </span>
-          </ng-container>
-        </div>
-        
-        
+      
         <div>
-          <label for="description" class="block text-gray-700 font-semibold mb-1">Description</label>
-          <textarea id="description" placeholder="Description" formControlName="description" name="description"
-            class="border border-gray-300 rounded-md p-2 w-full h-20"></textarea>
+          <mat-form-field class="w-full">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" placeholder="Description" rows="3"></textarea>
+          </mat-form-field>
         </div>
         <div>
-          <label for="responsibilities" class="block text-gray-700 font-semibold mb-1">Responsibilities</label>
-          <textarea id="responsibilities" placeholder="Responsibilities" formControlName="responsibilities" name="responsibilities"
-            class="border border-gray-300 rounded-md p-2 w-full h-20"></textarea>
+          <mat-form-field class="w-full">
+            <mat-label>Responsibilities</mat-label>
+            <textarea matInput formControlName="responsibilities" placeholder="Responsibilities" rows="3"></textarea>
+          </mat-form-field>
         </div>
         <div>
-          <label for="preference" class="block text-gray-700 font-semibold mb-1">Preferences</label>
-          <textarea id="preference" placeholder="Preferences" formControlName="preference" name="preference"
-            class="border border-gray-300 rounded-md p-2 w-full h-20"></textarea>
+          <mat-form-field class="w-full">
+            <mat-label>Preferences</mat-label>
+            <textarea matInput formControlName="preference" placeholder="Preferences" rows="3"></textarea>
+          </mat-form-field>
         </div>
-        <button type="submit" (click)="updateJob()" class="bg-[#c8a2f2] text-white py-2 px-4 rounded-md w-full">Submit</button>
+        <button type="submit" (click)="updateJob()" mat-raised-button color="primary" class="w-full">Submit</button>
       </form>
+      
     </div>
   </main>
 </div>

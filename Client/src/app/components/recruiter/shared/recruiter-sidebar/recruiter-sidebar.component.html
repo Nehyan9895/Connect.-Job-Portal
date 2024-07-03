@@ -1,7 +1,8 @@
-<nav class=" w-full h-full  new-bg p-4 space-y-4">
-  <button class="w-full py-3 bg-[#0000FF] text-white rounded-md font-medium text-lg"[routerLink]="['/recruiter/create-job']">Post Job +</button>
-  <button class="w-full py-3 bg-[#D3A8FF] text-[#333] rounded-md font-medium text-lg">Applications</button>
-  <button class="w-full py-3 bg-[#D3A8FF] text-[#333] rounded-md font-medium text-lg">Interviews</button>
-  <button class="w-full py-3 bg-[#D3A8FF] text-[#333] rounded-md font-medium text-lg">Analytics</button>
-  <button class="w-full py-3 bg-[#D3A8FF] text-[#333] rounded-md font-medium text-lg" (click)="logout()">Sign Out</button>
+<nav class="w-full h-full new-bg p-4 space-y-4">
+  <button class="nav-link" [routerLink]="['/recruiter/create-job']" routerLinkActive="active">Post Job +</button>
+  <button class="nav-link" [routerLink]="['/recruiter/applications']" routerLinkActive="active">Applications</button>
+  <button class="nav-link" [routerLink]="['/recruiter/interviews']" routerLinkActive="active">Interviews</button>
+  <button class="nav-link" [routerLink]="['/recruiter/analytics']" routerLinkActive="active">Analytics</button>
+  <button class="nav-link" (click)="logout()">Sign Out</button>
 </nav>
+

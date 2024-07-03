@@ -21,6 +21,7 @@ export interface ICandidate extends Document {
         experienceDuration?: number;
     }>;
     skills: string[];
+    resume:string
 }
 
 const candidateSchema = new Schema<ICandidate>({
@@ -75,6 +76,9 @@ const candidateSchema = new Schema<ICandidate>({
         type: [String],
         required: true
     },
+    resume:{
+        type:String,
+    }
 });
 
 export const Candidate = mongoose.model('Candidate', candidateSchema);

@@ -40,7 +40,7 @@ export class RecruiterLoginComponent {
       this.recruiterService.login(this.loginForm.value).subscribe({
         next:(response)=>{
           console.log(response,'reseress');
-          localStorage.setItem('recruiterToken',response.token)
+          localStorage.setItem('recruiterToken',response.data.token)
           localStorage.setItem('recruiter_id',response.data.recruiter.id)
           const recruiter = response.recruiter
           this.toastr.success(response.data.message,'Success')

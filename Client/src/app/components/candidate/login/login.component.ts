@@ -45,10 +45,10 @@ export class LoginComponent {
       this.userService.login(this.loginForm.value).subscribe({
         next:(response)=>{
           console.log(response,'reseress');
-          localStorage.setItem('userToken',response.token)
-          const user = response.user
+          localStorage.setItem('userToken',response.data.token)
+          const user = response.data.user
           localStorage.setItem('user_id',user.id)
-          this.toastr.success(response.message,'Success')
+          this.toastr.success(response.data.message,'Success')
           if(user.is_done){
           this.router.navigate(['/candidate/home'])
           }else{

@@ -21,7 +21,7 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div><strong>Job Code:</strong> {{ jobData.job_id }}</div>
                 <div><strong>Location:</strong> {{ jobData.job_location }}</div>
-                <div><strong>Job Type:</strong> {{ jobData.job_type }}</div>
+                <div><strong>Job Type:</strong> {{ jobData.job_type | jobType }}</div>
                 <div><strong>Salary:</strong> {{ jobData.salary_range_min }} - {{ jobData.salary_range_max }} in LPA</div>
                 <div>
                   <strong>Skills:</strong>

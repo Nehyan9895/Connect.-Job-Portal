@@ -44,14 +44,12 @@ class JobController {
     async getAllJobsOfRecruiter(req: Request, res: Response) {
         try {
             const user_id = req.params.id;
-            console.log(user_id);
             
             if (!user_id) {
                 return res.status(400).json(createErrorResponse('Invalid user ID'));
             }
 
             const jobs = await jobService.getAllJobsByRecruiterId(user_id);
-            console.log(jobs);
             
             res.status(200).json(createSuccessResponse(jobs));
         } catch (err) {

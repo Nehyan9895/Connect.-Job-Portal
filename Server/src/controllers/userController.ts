@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { userService } from '../services/userService';
 import { createSuccessResponse, createErrorResponse } from '../helpers/responseHelper';
+import { CustomMulterRequest } from '../config/multer';
 
 class UserController {
     async signup(req: Request, res: Response) {
@@ -65,22 +66,24 @@ class UserController {
         }
     }
 
-    async createProfile(req: Request, res: Response) {
-        try {
-            const email = req.body.email;
-            const profileData = JSON.parse(req.body.candidateData);
-            const file = req.file;
+    async createProfile(req: CustomMulterRequest, res: Response) {
+    try {
+        const email = req.body.email;
+        const profileData = JSON.parse(req.body.candidateData);
+        const imageFile = req.files?.image?.[0];
+        const resumeFile = req.files?.resume?.[0];
 
-            const result = await userService.createProfile(email, profileData, file);
-            res.status(200).json(createSuccessResponse(result));
-        } catch (err) {
-            if (err instanceof Error) {
-                res.status(400).json(createErrorResponse(err.message));
-            } else {
-                res.status(400).json(createErrorResponse('An unknown error occurred'));
-            }
+        const result = await userService.createProfile(email, profileData, imageFile, resumeFile);
+        res.status(200).json(createSuccessResponse(result));
+    } catch (err) {
+        if (err instanceof Error) {
+            res.status(400).json(createErrorResponse(err.message));
+        } else {
+            res.status(400).json(createErrorResponse('An unknown error occurred'));
         }
     }
+}
+
 
     async sendForgotOtp(req: Request, res: Response) {
         try {

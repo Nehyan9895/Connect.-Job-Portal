@@ -13,7 +13,7 @@ router.post('/create-job',jobController.createJob);
 router.get('/home/:id',jobController.getAllJobsOfRecruiter);
 router.get('/edit-job/:id',jobController.getJobById)
 router.post('/edit-job',jobController.updateJob)
-router.get('/:id/applications',jobApplicationController.getJobApplicationByRecruiter)
+router.get('/applicants/:id',jobApplicationController.getJobApplicationByJob)
 
 
 

@@ -2,6 +2,7 @@ import { jobApplicationRepository } from "../repositories/jobApplicationReposito
 import { candidateRepository } from "../repositories/candidateRepository";
 import { jobRepository } from "../repositories/jobRepository";
 import mongoose from "mongoose";
+import { recruiterRepository } from "../repositories/recruiterRepository";
 
 class JobApplicationService {
     async applyForJob(userId: string, jobId: string) {
@@ -59,21 +60,11 @@ class JobApplicationService {
         return applications;
     }
 
-    async getJobApplicationsByRecruiter(recruiterId:string){
-        if (!mongoose.Types.ObjectId.isValid(recruiterId)) {
-            throw new Error('Invalid recruiter ID format');
-        }
-
-        const jobs = await jobRepository.findJobsByRecruiterId(recruiterId);
-
-        if (!jobs.length) {
-            throw new Error('No jobs found for this recruiter');
-        }
-
-        const jobIds = jobs.map(job => job._id as mongoose.Types.ObjectId);
-        const applications = await jobApplicationRepository.findApplicationsByJobIds(jobIds);
-        return applications;
-    }
+    async getApplicationsForJob(jobId: mongoose.Types.ObjectId) {
+        const jobApplications = await jobApplicationRepository.findApplicationsByJobId(jobId);
+        return jobApplications;
+      }
+    
     
 
 }

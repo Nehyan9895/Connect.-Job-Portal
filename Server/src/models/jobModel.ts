@@ -77,7 +77,8 @@ const jobSchema = new mongoose.Schema({
     },
     preference:{
         type:String
-    }
-
+    },
+},{
+    timestamps:true
 })
 export const Job = mongoose.model<IJob>('Job',jobSchema)

@@ -28,7 +28,7 @@ app.use('/recruiter', recruiterRoutes);
 
 connectDB();
 
-const PORT = 5000;
+const PORT = 5001;
 
 const server = http.createServer(app);
 setupSocket(server);

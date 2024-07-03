@@ -20,8 +20,8 @@ const storage = multer.diskStorage({
 
 
 export const imageFilter = (req:Request,file:Express.Multer.File,cb:CallableFunction)=>{
-    if (!file.originalname.match(/\.(jpg|jpeg|png|gif|svg)$/)) {
-        return cb((new Error('You can only upload Images')),false) 
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif|svg|pdf)$/)) {
+        return cb((new Error('You can only upload Images of pdf')),false) 
     }
     cb(null,true)
 }
@@ -29,7 +29,14 @@ export const imageFilter = (req:Request,file:Express.Multer.File,cb:CallableFunc
 
 
 
-
+ interface MulterFiles {
+    [fieldname: string]: Express.Multer.File[];
+  }
+  
+export interface CustomMulterRequest extends Request {
+    files?: MulterFiles;
+  }
+  
 
 
 export const upload = multer({storage:storage,fileFilter:imageFilter})

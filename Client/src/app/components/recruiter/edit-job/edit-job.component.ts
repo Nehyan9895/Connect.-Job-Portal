@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
 import { RecruiterHeaderComponent } from "../shared/recruiter-header/recruiter-header.component";
 import { RecruiterSidebarComponent } from "../shared/recruiter-sidebar/recruiter-sidebar.component";
@@ -8,17 +8,44 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { RecruiterService } from '../../../services/recruiter/recruiter.service';
 import { ActivatedRoute } from '@angular/router';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatNativeDateModule } from '@angular/material/core';
+import { allSkills } from '../../../constants/skills.constant';
 
 @Component({
     selector: 'app-edit-job',
     standalone: true,
     templateUrl: './edit-job.component.html',
     styleUrl: './edit-job.component.scss',
-    imports: [FooterComponent, RecruiterHeaderComponent, RecruiterSidebarComponent,ReactiveFormsModule,CommonModule,]
+    imports: [
+      FooterComponent, 
+      RecruiterHeaderComponent, 
+      RecruiterSidebarComponent,
+      ReactiveFormsModule,
+      CommonModule,
+      MatFormFieldModule, 
+      MatChipsModule, 
+      MatIconModule,
+      MatAutocompleteModule,
+      MatInputModule,
+      MatSelectModule,
+      MatDatepickerModule,
+      MatNativeDateModule
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditJobComponent implements OnInit {
   jobForm: FormGroup;
   jobId: string | null;
+  allSkills = allSkills
+  currentSkill = new FormControl('');
+  filteredSkills: string[] = this.allSkills;
 
   constructor(
     private recruiterService: RecruiterService,
@@ -43,6 +70,7 @@ export class EditJobComponent implements OnInit {
       preference: ['']
     });
     this.jobId = localStorage.getItem('job_id');
+    this.currentSkill.valueChanges.subscribe(value => this.filterSkills(value ?? ''));
   }
 
   // Getter for easy access to skills FormArray
@@ -50,18 +78,38 @@ export class EditJobComponent implements OnInit {
     return this.jobForm.get('skills') as FormArray;
   }
 
-  // Method to add a skill
-  addSkill(): void {
-    const newSkill = this.jobForm.get('newSkill') as FormControl;
-    if (newSkill.valid) {
-      this.skills.push(new FormControl(newSkill.value, Validators.required));
-      newSkill.reset();
+  addSkillFromInput(event?: MatChipInputEvent): void {
+    const inputElement = event?.chipInput.inputElement;
+    const value: string = (event?.value || this.currentSkill.value || '').trim();
+
+    if (value && !this.skills.controls.some(control => control.value.toLowerCase() === value.toLowerCase())) {
+      this.skills.push(new FormControl(value, Validators.required));
+      this.currentSkill.setValue('');
+    }
+
+    event?.chipInput!.clear();
+    if (inputElement) {
+      inputElement.value = '';
     }
   }
 
-  // Method to remove a skill
   removeSkill(index: number): void {
-    this.skills.removeAt(index);
+    if (index >= 0) {
+      this.skills.removeAt(index);
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    const value = event.option.viewValue;
+    if (!this.skills.controls.some(control => control.value.toLowerCase() === value.toLowerCase())) {
+      this.skills.push(new FormControl(value, Validators.required));
+    }
+    this.currentSkill.setValue('');
+  }
+
+  filterSkills(value: string): void {
+    const filterValue = value.toLowerCase();
+    this.filteredSkills = this.allSkills.filter(skill => skill.toLowerCase().includes(filterValue));
   }
 
   ngOnInit(): void {
@@ -120,6 +168,7 @@ export class EditJobComponent implements OnInit {
           console.log(response);
           
           console.log('Job updated successfully', response);
+          this.toastr.success(response.data.message,'Success')
           this.router.navigate(['/recruiter/home']); // Navigate to job list or another relevant page
         },
         error:(error)=>{

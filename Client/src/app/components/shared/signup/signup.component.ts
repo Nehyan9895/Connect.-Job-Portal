@@ -59,12 +59,12 @@ export class SignupComponent {
       next: (response)=>{
         console.log(response);
         
-        this.toster.success(response.message,'success')
+        this.toster.success(response.data.message,'success')
         
         localStorage.setItem('isEmployee',this.userForm.value.isEmployee)
         this.userForm.reset();
         this.router.navigate(['/candidate/otp-page']) 
-        localStorage.setItem('otpToken',response.otpToken)
+        localStorage.setItem('otpToken',response.data.otpToken)
       },
       error:(error) =>{
         this.toster.error(error.error.error,'Error');

@@ -16,7 +16,7 @@ class JobRepository{
         return await Job.find().populate('recruiter_id');
     }
 
-    async findJobsByRecruiterId(recruiter_id:string){
+    async findJobsByRecruiterId(recruiter_id:string|null){
         return await Job.find({ recruiter_id: recruiter_id }).populate('recruiter_id');
     } 
 

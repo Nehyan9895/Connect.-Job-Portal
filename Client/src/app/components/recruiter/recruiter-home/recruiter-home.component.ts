@@ -8,13 +8,15 @@ import { CommonModule } from '@angular/common';
 import { Job } from '../../../models/job.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
+import { ApplicationsComponent } from "../applications/applications.component";
+import { JobTypePipe } from '../../../pipes/job-type.pipe';
 
 @Component({
     selector: 'app-recruiter-home',
     standalone: true,
     templateUrl: './recruiter-home.component.html',
     styleUrl: './recruiter-home.component.scss',
-    imports: [FooterComponent, RecruiterHeaderComponent, RecruiterSidebarComponent,CommonModule,MatPaginator]
+    imports: [FooterComponent, RecruiterHeaderComponent, RecruiterSidebarComponent, CommonModule, MatPaginator, ApplicationsComponent,JobTypePipe]
 })
 export class RecruiterHomeComponent implements OnInit {
 
@@ -33,15 +35,27 @@ throw new Error('Method not implemented.');
     constructor(private recruiterService: RecruiterService, private toastr: ToastrService,private router:Router) {}
 
     ngOnInit(): void {
-      const recruiter_id:string = localStorage.getItem('recruiter_id') as string
+      const recruiter_id: string = localStorage.getItem('recruiter_id') as string;
       this.recruiterService.getJobs(recruiter_id).subscribe((data) => {
         this.jobs = data.data;
-        console.log(data.data);
-        
+    
+        // Sort jobs by the created_at field in descending order
+        this.jobs.sort((a: any, b: any) => {
+          const dateA = new Date(a.createdAt);
+          const dateB = new Date(b.createdAt);
+          return dateB.getTime() - dateA.getTime(); // Sort in descending order
+        });
+    
+        console.log(this.jobs);
         this.length = this.jobs.length;
         this.updateDisplayedJobs();
+
+        this.recruiterService.setJobs(this.jobs);
+
       });
     }
+    
+    
 
     updateDisplayedJobs(): void {
       const start = this.pageIndex * this.pageSize;

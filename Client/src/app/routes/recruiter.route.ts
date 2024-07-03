@@ -6,11 +6,15 @@ import { RecruiterProfileComponent } from "../components/recruiter/recruiter-pro
 import { CreateJobComponent } from "../components/recruiter/create-job/create-job.component";
 import { EditJobComponent } from "../components/recruiter/edit-job/edit-job.component";
 import { MessagesComponent } from "../components/recruiter/messages/messages.component";
+import { recruiterFalseAuthGuard } from "../guard/recruiter-false-auth.guard";
+import { JobApplicantsComponent } from "../components/recruiter/job-applicants/job-applicants.component";
+import { ApplicationsComponent } from "../components/recruiter/applications/applications.component";
 
 export const recruiterRoute : Routes = [
     {
         path:'recruiter/login',
-        component:RecruiterLoginComponent
+        component:RecruiterLoginComponent,
+        canActivate:[recruiterFalseAuthGuard]
     },
     {
         path:'recruiter/home',
@@ -36,5 +40,14 @@ export const recruiterRoute : Routes = [
         path: 'recruiter/chat/:id',
         component: MessagesComponent,
         canActivate: [recruiterAuthGuard]
+    },
+    {
+        path:'recruiter/applications',
+        component:ApplicationsComponent,
+        canActivate:[recruiterAuthGuard]
+    },
+    {
+        path:'recruiter/applicants',
+        component:JobApplicantsComponent
     }
 ]

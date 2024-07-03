@@ -42,6 +42,8 @@ export class UserPersonalProfileComponent implements OnInit {
   currentStep: number = 1;
   selectedFile: File | undefined;
   selectedFileName: string | null = null;
+  selectedResume: File | undefined;
+  selectedResumeName: string | null = null;
   imagePreview: string | null = null;
 
   allSkills = allSkills
@@ -71,6 +73,7 @@ export class UserPersonalProfileComponent implements OnInit {
       companyName: ['', Validators.required],
       experienceDuration: [0, [Validators.required, Validators.min(0)]],
       skills: this.fb.array([], Validators.required),
+      resume: [null, Validators.required],
       newSkill: ['']
     });
 
@@ -163,6 +166,22 @@ export class UserPersonalProfileComponent implements OnInit {
     return years;
   }
 
+  onResumeSelected(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const file = inputElement.files?.item(0);
+
+    if (file) {
+      this.selectedResume = file;
+      this.selectedResumeName = file.name;
+
+      this.profileForm.patchValue({
+        resume: file
+      });
+      this.profileForm.get('resume')!.updateValueAndValidity();
+    }
+  }
+
+
   candidateProfile(): void {
     if (this.profileForm.invalid) {
       this.toastr.error('Please fill in all required fields correctly.', 'Error');
@@ -174,19 +193,19 @@ export class UserPersonalProfileComponent implements OnInit {
       const formData = new FormData();
       formData.append('email', email);
   
-      // Stringify candidateData
       const candidateData = JSON.stringify(this.profileForm.value);
       formData.append('candidateData', candidateData);
   
-      // Append file if selected
       if (this.selectedFile) {
-        formData.append('upload', this.selectedFile);
+        formData.append('image', this.selectedFile);
+      }
+
+      if (this.selectedResume) {
+        formData.append('resume', this.selectedResume);
       }
   
-      // Log the FormData for debugging
       console.log(formData);
   
-      // Send the request to backend
       this.userBackend.profile(formData).subscribe({
         next: (response) => {
           this.toastr.success(response.message, 'Success');
@@ -201,6 +220,7 @@ export class UserPersonalProfileComponent implements OnInit {
       this.toastr.error('Email not found. Please login again.', 'Error');
     }
   }
+
   
   
 }
