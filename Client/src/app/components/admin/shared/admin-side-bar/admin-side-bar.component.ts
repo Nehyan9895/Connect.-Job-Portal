@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { AdminBackendService } from '../../../../services/admin/admin.service';
 import { ToastrService } from 'ngx-toastr';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-admin-side-bar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink,RouterLinkActive,],
   templateUrl: './admin-side-bar.component.html',
   styleUrl: './admin-side-bar.component.scss'
 })

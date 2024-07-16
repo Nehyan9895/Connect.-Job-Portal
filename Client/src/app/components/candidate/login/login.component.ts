@@ -21,7 +21,7 @@ import { CommonModule } from '@angular/common';
 })
 export class LoginComponent {
   loginForm:FormGroup;
-  
+  image:string |undefined
 
   constructor(
     private userService:userService,
@@ -47,12 +47,13 @@ export class LoginComponent {
           console.log(response,'reseress');
           localStorage.setItem('userToken',response.data.token)
           const user = response.data.user
+          this.image = user.image
           localStorage.setItem('user_id',user.id)
           this.toastr.success(response.data.message,'Success')
           if(user.is_done){
           this.router.navigate(['/candidate/home'])
           }else{
-            this.router.navigate(['/candidate/profile'])
+            this.router.navigate(['/candidate/add-profile'])
           }
         },
         error: (error) => {

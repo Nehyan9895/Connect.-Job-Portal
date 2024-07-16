@@ -19,7 +19,7 @@ import { ToastrService } from 'ngx-toastr';
 
 export class ApplyJobComponent implements OnInit {
     job!: any; // Adjust the type as per your Job interface
-    userId: any = localStorage.getItem('user_id');
+    userId: string = localStorage.getItem('user_id') as string
   
     constructor(
       private route: ActivatedRoute,
@@ -35,6 +35,8 @@ export class ApplyJobComponent implements OnInit {
         this.userService.getJobByJobID(jobId).subscribe(
           (job) => {
             this.job = job.data;
+            console.log(this.job);
+          
           },
           error => {
             console.error('Failed to fetch job details', error);

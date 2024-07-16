@@ -27,6 +27,10 @@ export class AdminBackendService {
     return this.http.patch<any>(`${this.apiKey}/users/${userId}/verification`, { is_verified });
   }
 
+  updateRecruiterVerificationStatus(userId: string, is_verified: boolean): Observable<any> {
+    return this.http.patch<any>(`${this.apiKey}/recruiters/${userId}/verification`, { is_verified });
+  }
+
   getRecruiters():Observable<any>{
     return this.http.get<any>(`${this.apiKey}/recruiter-list`)
   }

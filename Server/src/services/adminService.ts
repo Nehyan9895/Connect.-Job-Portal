@@ -41,6 +41,14 @@ class AdminService{
         }
         return user;
       }
+
+      async updateRecruiterVerificationStatus(userId:string,is_verified:boolean){
+        const user = await adminRepository.updateRecruiterVerificationStatus(userId, is_verified);
+        if (!user) {
+          throw new Error('User not found or update failed');
+        }
+        return user;
+      }
     
       async getAllRecruitersWithUserInfo(){
         return await adminRepository.getAllRecruitersWithUserInfo();

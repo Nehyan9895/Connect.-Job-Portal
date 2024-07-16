@@ -30,6 +30,10 @@ const recruiterSchema = new Schema({
         type:String,
         required:true
     },
+    companyLocations:{
+        type:[String],
+        required:true
+    }
 })
 
 export const Recruiter = mongoose.model('Recruiter', recruiterSchema);

@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>Edit Profile</h2>
+<form [formGroup]="profileForm" (ngSubmit)="onSave()">
+  <div mat-dialog-content class="custom-dialog-content">
+    <div class="mb-6">
+      <label for="fullName" class="block mb-2 text-gray-700">Full Name</label>
+      <input formControlName="fullName" id="fullName" type="text"
+             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+    </div>
+
+    <div class="mb-6">
+      <label for="phone" class="block mb-2 text-gray-700">Phone</label>
+      <input formControlName="phone" id="phone" type="text"
+             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+    </div>
+
+    <div class="mb-6">
+      <label for="dob" class="block mb-2 text-gray-700">Date of Birth</label>
+      <input matInput [matDatepicker]="picker" formControlName="dob" id="dob" type="text"
+             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </div>
+
+    <div class="mb-6">
+      <label for="gender" class="block mb-2 text-gray-700">Gender</label>
+      <mat-select formControlName="gender" id="gender" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+        <mat-option value="Male">Male</mat-option>
+        <mat-option value="Female">Female</mat-option>
+        <mat-option value="Other">Other</mat-option>
+      </mat-select>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button class="mt-6 bg-red-700 text-white px-4 py-2 m-2 rounded" type="button" (click)="onCancel()">Cancel</button>
+    <button mat-button class="mt-6 bg-black text-white px-4 py-2 m-2 rounded" type="submit" [disabled]="profileForm.invalid">Save</button>
+  </div>
+</form>

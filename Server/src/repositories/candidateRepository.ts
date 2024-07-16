@@ -21,6 +21,11 @@ class CandidateRepository{
         }
     }
 
+    async getCandidateById(userId:string){
+        const candidate = await Candidate.findById(userId);
+        return candidate
+    }
+
     async updateCandidateResume(userId: string, resumeUrl: string) {
         const candidate = await this.findCandidateByUserId(userId);
         if (candidate) {
@@ -31,7 +36,54 @@ class CandidateRepository{
         }
     }
 
+    async updateCandidateEducation(userId: string, educationData: any): Promise<any> {
+        const candidate = await this.findCandidateByUserId(userId);
+        if (!candidate) {
+          throw new Error("Candidate not found");
+        }
+        candidate.education = educationData;
+        await candidate.save();
+        return candidate;
+      }
 
+      async updateCandidateExperience(userId: string, experienceData: any): Promise<any> {
+        const candidate = await this.findCandidateByUserId(userId);
+        if (!candidate) {
+          throw new Error("Candidate not found");
+        }
+        candidate.experience = experienceData;
+        await candidate.save();
+        return candidate;
+      }
+
+      async updateCandidateSkills(userId: string, skills: any): Promise<any> {
+        const candidate = await this.findCandidateByUserId(userId);
+        if (!candidate) {
+          throw new Error("Candidate not found");
+        }
+        candidate.skills = skills;
+        await candidate.save();
+        return candidate;
+      }
+
+      async updateCandidateProfile(userId:string, candidateData:any) {
+      
+        const updatedProfile = await Candidate.findByIdAndUpdate(
+          userId,
+          {
+            fullName: candidateData.fullName,
+            phone: candidateData.phone,
+            dob: candidateData.dob,
+            gender: candidateData.gender
+          },
+          { new: true }
+        );
+      
+        return updatedProfile;
+      }
+      
+      
+      
 }
 
 export const candidateRepository = new CandidateRepository();

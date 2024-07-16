@@ -33,6 +33,10 @@ class RecruiterRepository{
         }
     }
 
+    async findRecruiterByUserId2(id:string){
+        return await Recruiter.findOne({user_id:id})
+    }
+
 }
 
 export const recruiterRepository = new RecruiterRepository();

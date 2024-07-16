@@ -1,0 +1,21 @@
+.nav-link {
+    display: block;
+    width: 100%;
+    padding: 1rem; /* Adjust padding as needed */
+    text-align: center;
+    font-size: 1.1rem; /* Adjust font size as needed */
+    font-weight: 500; /* Adjust font weight as needed */
+    color: #fff; /* Default text color */
+    background-color: #4b21c7; /* Default background color */
+    border-radius: 0.5rem; /* Rounded corners */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+  
+    /* Optional: Add box-shadow for depth */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .nav-link.active {
+    background-color: #FFFFFF; /* Active background color */
+    color: #000000; /* Active text color */
+    border-bottom: 2px solid #0000FF; /* Active bottom border color */
+  }

@@ -23,7 +23,9 @@ class RecruiterController {
             const email = req.body.email;
             const profileData = req.body.candidateData;
             const file = req.file;
-    
+
+            console.log(email);
+            
             const result = await recruiterService.createProfile(email, profileData, file);
             res.status(200).json(createSuccessResponse(result));
         } catch (err) {
@@ -34,6 +36,24 @@ class RecruiterController {
             }
         }
     }
+
+    async getCandidateById(req:Request,res:Response){
+        try {
+            const id = req.params.id
+            console.log(id,'ididnono');
+            
+            const candidate = await recruiterService.getCandidateById(id)
+            res.status(200).json(createSuccessResponse(candidate));
+        } catch (err) {
+            if (err instanceof Error) {
+                res.status(400).json(createErrorResponse(err.message));
+            } else {
+                res.status(400).json(createErrorResponse('An unknown error occurred'));
+            }
+        }
+    }
+
+    
 }
 
 export const recruiterController = new RecruiterController();

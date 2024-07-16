@@ -16,7 +16,7 @@ import { JobTypePipe } from "../../../pipes/job-type.pipe";
     imports: [FooterComponent, RecruiterHeaderComponent, RecruiterSidebarComponent, CommonModule, JobTypePipe]
 })
 export class ApplicationsComponent {
-  jobs: any[] = [];
+  jobs: any;
 
 
     isModalOpen = false;
@@ -35,7 +35,8 @@ export class ApplicationsComponent {
 
   ngOnInit(): void {
     this.jobs = this.recruiterService.getJobsLocal();
-
+    console.log(this.jobs);
+    
   }
 
   getApplicationsByRecruiter(jobId: string) {

@@ -205,7 +205,6 @@ export class UserPersonalProfileComponent implements OnInit {
       }
   
       console.log(formData);
-  
       this.userBackend.profile(formData).subscribe({
         next: (response) => {
           this.toastr.success(response.message, 'Success');

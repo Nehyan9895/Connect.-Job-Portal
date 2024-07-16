@@ -2,57 +2,93 @@
 <div class="flex flex-col md:flex-row">
     <app-recruiter-sidebar class="w-1/5"></app-recruiter-sidebar>
     <main class="flex-1 bg-white p-6 rounded-lg mt-4 md:mt-0 md:ml-4">
-    <div class="w-3/4 p-6">
-        <h1 class="text-2xl font-semibold mb-4">Profile</h1>
-        <div class="bg-[#f7f7f7] p-6 rounded-lg">
-            <div class="flex justify-center mb-6">
-                <div class="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center">
-                    <i class="fas fa-user text-4xl text-gray-500"></i>
+        <div class="w-3/4 p-6">
+            <h1 class="text-2xl font-semibold mb-4">Profile</h1>
+            <div class="bg-[#f7f7f7] p-6 rounded-lg">
+                <div class="flex justify-center mb-6">
+                    <div class="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center">
+                        <ng-container *ngIf="imagePreview; else defaultIcon">
+                            <img [src]="imagePreview" alt="Profile Image Preview" class="rounded-full w-32 h-32 object-cover">
+                        </ng-container>
+                        <ng-template #defaultIcon>
+                            <i class="fas fa-user text-4xl text-gray-500"></i>
+                        </ng-template>
+                    </div>
+                    
                 </div>
+                <form [formGroup]="profileForm" class="space-y-4">
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <mat-form-field appearance="fill" class="w-full">
+                                <mat-label>Full Name</mat-label>
+                                <input matInput formControlName="fullName" placeholder="Full Name">
+                                <mat-error *ngIf="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched">
+                                    Invalid name.
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field appearance="fill" class="w-full">
+                                <mat-label>Company Name</mat-label>
+                                <input matInput formControlName="companyName" placeholder="Company Name">
+                                <mat-error *ngIf="profileForm.get('companyName')?.invalid && profileForm.get('companyName')?.touched">
+                                    Company Name is required.
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <mat-form-field appearance="fill" class="w-full">
+                                <mat-label>Phone Number</mat-label>
+                                <input matInput formControlName="phone" placeholder="Phone Number">
+                                <mat-error *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched">
+                                    <div *ngIf="profileForm.get('phone')?.errors?.['required']">Phone number is required.</div>
+                                    <div *ngIf="profileForm.get('phone')?.errors?.['minlength'] || profileForm.get('phone')?.errors?.['maxlength']">Phone number must be 10 digits long.</div>
+                                    <div *ngIf="profileForm.get('phone')?.errors?.['pattern']">Phone number must contain only numbers.</div>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div >
+                            <mat-form-field class="example-chip-list w-full">
+                                <mat-label>Company Locations</mat-label>
+                                <mat-chip-grid #chipGrid aria-label="Company location selection">
+                                    <mat-chip-row *ngFor="let location of companyLocations.controls; let i = index" (removed)="removeLocation(i)">
+                                        {{ location.value }}
+                                        <button matChipRemove [attr.aria-label]="'remove ' + location.value">
+                                            <mat-icon>cancel</mat-icon>
+                                        </button>
+                                    </mat-chip-row>
+                                </mat-chip-grid>
+                                <input
+                                    placeholder="New location..."
+                                    #locationInput
+                                    [formControl]="currentLocation"
+                                    [matChipInputFor]="chipGrid"
+                                    [matAutocomplete]="auto"
+                                    (matChipInputTokenEnd)="addLocationFromInput()"
+                                />
+                                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                                    <mat-option *ngFor="let filteredLocation of filteredLocations" [value]="filteredLocation">
+                                        {{ filteredLocation }}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                        </div>
+                        <div>
+                            <button (click)="imageInput.click()" class="bg-blue-700 py-2 px-4 rounded-md text-white">Add profile pic</button>
+                            <input #imageInput hidden type="file" (change)="onFileSelected($event)" accept="image/*">
+                        </div>
+                        <div *ngIf="selectedFileName">
+                            <p>Image added: {{ selectedFileName }}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" (click)="recruiterProfile()" [disabled]="profileForm.invalid" class="w-full bg-blue-700 text-white py-2 px-4 rounded-lg">Add Profile</button>
+                    </div>
+                </form>
             </div>
-            <form [formGroup]="profileForm" class="space-y-4">
-                <div class="grid grid-cols-1 gap-4">
-                    <div>
-                    <input formControlName="fullName" name="fullName" placeholder="Full Name" type="text" id="fullname"
-                           class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
-                    <div *ngIf="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched"
-                         class="text-red-500 mt-1">Invalid name.
-                    </div>
-                    </div>
-                    <div>
-                        <input formControlName="companyName" name="companyName" placeholder="Company Name" type="text" id="companyName"
-                        class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
-                    <div *ngIf="profileForm.get('companyName')?.invalid && profileForm.get('companyName')?.touched"
-                         class="text-red-500 mt-1">Company Name is required
-                    </div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 gap-4">
-                    <div>
-                        <input placeholder="Phone Number" formControlName="phone" name="phone" type="text" id="phone"
-                           class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
-                    <div *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched"
-                         class="text-red-500 mt-1">
-                      <div *ngIf="profileForm.get('phone')?.errors?.['required']">Phone number is required.</div>
-                      <div *ngIf="profileForm.get('phone')?.errors?.['minlength'] || profileForm.get('phone')?.errors?.['maxlength']">Phone number must be 10 digits long.</div>
-                      <div *ngIf="profileForm.get('phone')?.errors?.['pattern']">Phone number must contain only numbers.</div>
-                    </div>
-                    </div>
-                    <div>
-                        <button (click)="imageInput.click()" class="bg-blue-700 py-2 px-4 rounded-md text-white">Add profile pic</button>
-                        <input #imageInput hidden type="file" (change)="onFileSelected($event)" accept="image/*">
-                      </div>
-                      <div *ngIf="selectedFileName">
-                          <p>Image added: {{ selectedFileName }}</p>
-                          <img [src]="imagePreview" *ngIf="imagePreview" alt="Profile Image Preview" style="max-width: 100px; max-height: 100px;">
-                      </div>
-                </div>
-                <div>
-                    <button type="submit" (click)="recruiterProfile()" [disabled]="profileForm.invalid" class="w-full bg-blue-700 text-white py-2 px-4 rounded-lg">Add Profile</button>
-                </div>
-            </form>
         </div>
-    </div>
     </main>
 </div>
 <app-footer></app-footer>

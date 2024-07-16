@@ -33,10 +33,29 @@ class AdminController {
     }
 
     async updateUserVerificationStatus(req: Request, res: Response) {
+        
+        
         const userId = req.params.id;
+        console.log(userId);
         const { is_verified } = req.body;
         try {
             const updatedUser = await adminService.updateUserVerificationStatus(userId, is_verified);
+            res.status(200).json(createSuccessResponse(updatedUser));
+        } catch (err) {
+            if (err instanceof Error) {
+                res.status(400).json(createErrorResponse(err.message));
+            } else {
+                res.status(400).json(createErrorResponse('An unknown error occurred'));
+            }
+        }
+    }
+
+    async updateRecruiterVerificationStatus(req:Request,res:Response){
+        const userId = req.params.id;
+        console.log(userId);
+        const { is_verified } = req.body;
+        try {
+            const updatedUser = await adminService.updateRecruiterVerificationStatus(userId, is_verified);
             res.status(200).json(createSuccessResponse(updatedUser));
         } catch (err) {
             if (err instanceof Error) {

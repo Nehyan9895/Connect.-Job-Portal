@@ -2,29 +2,19 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 
 const messageSchema = new Schema({
-    sender_id:{
-        type: mongoose.Types.ObjectId,
-        ref: "User",
-        require: true,
+    senderId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
-    reciever_id:{
-        type: mongoose.Types.ObjectId,
-        ref: "User",
-        require: true,
+    receiverId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
-    chatRoom_id:{
-        type: mongoose.Types.ObjectId,
-        ref: "ChatRoom",
-        require: true,
-    },
-    text:{
+    message:{
         type:String,
-        trim:true
+        required:true
     },
-    isRead:{
-        type:Boolean,
-        default:false
-    }
+    
 },{
     timestamps:true
 })

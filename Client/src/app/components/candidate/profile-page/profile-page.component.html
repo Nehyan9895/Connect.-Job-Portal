@@ -1,0 +1,194 @@
+<div class="bg-cyan-100 min-h-screen flex flex-col">
+  <!-- Header -->
+  <app-header></app-header>
+
+  <!-- Main content -->
+  <div class="flex-grow flex">
+    <!-- Sidebar (if any) -->
+
+    <!-- Main panel -->
+    <main class="flex-grow p-8 bg-blue-50">
+      <!-- Statistics Section -->
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="bg-purple-300 p-4 rounded">
+          <h3 class="font-bold">Jobs Applied</h3>
+          <p class="text-2xl font-bold">{{ statistics.jobsApplied }}</p>
+        </div>
+        <div class="bg-purple-300 p-4 rounded">
+          <h3 class="font-bold">Reviewed</h3>
+          <p class="text-2xl font-bold">{{ statistics.reviewed }}</p>
+        </div>
+        <div class="bg-purple-300 p-4 rounded">
+          <h3 class="font-bold">Resume Viewed</h3>
+          <p class="text-2xl font-bold">{{ statistics.resumeViewed }}</p>
+        </div>
+        <div class="bg-purple-300 p-4 rounded">
+          <h3 class="font-bold">Accepted</h3>
+          <p class="text-2xl font-bold">{{ statistics.accepted }}</p>
+        </div>
+        <div class="bg-purple-300 p-4 rounded">
+          <h3 class="font-bold">Interview Scheduled</h3>
+          <p class="text-2xl font-bold">{{ statistics.interviewScheduled }}</p>
+        </div>
+        <div class="bg-purple-300 p-4 rounded">
+          <h3 class="font-bold">Rejected</h3>
+          <p class="text-2xl font-bold">{{ statistics.rejected }}</p>
+        </div>
+      </div>
+
+      <!-- About Me Section -->
+      <div class="bg-purple-200 p-6 rounded shadow" *ngIf="candidateData">
+        <div class="flex justify-between items-center mb-4">
+          <h1 class="text-xl font-bold">About Me</h1>
+          <button class="text-blue-500" (click)="openEditProfileModal()">Edit</button>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <p class="font-semibold">Full name: {{ candidateData.fullName }}</p>
+            <p class="font-semibold">Mobile: {{ candidateData.phone }}</p>
+          </div>
+          <div>
+            <p class="font-semibold">Email: {{ candidateEmail }}</p>
+          </div>
+          <div>
+            <p class="font-semibold">Date of birth: {{ candidateData.dob | date }}</p>
+          </div>
+          <div>
+            <p class="font-semibold">Gender: {{ candidateData.gender }}</p>
+          </div>
+          <div>
+            <h2 class="font-semibold mb-4">Education</h2>
+            <div class="grid grid-cols-3 gap-4">
+              <div *ngFor="let education of candidateData.education" class="bg-gray-100 p-4 rounded shadow-md">
+                <div class="flex flex-col">
+                  <p class="font-semibold">Qualification: {{ education.qualification }}</p>
+                  <p class="font-semibold">Specialization: {{ education.specialization }}</p>
+                  <p class="font-semibold">College Name: {{ education.nameOfInstitution }}</p>
+                  <p class="font-semibold">Passed: {{ education.passoutMonth }} {{ education.passoutYear }}</p>
+                </div>
+                <div class="flex justify-end mt-2">
+                  <button mat-button class="mt-6 bg-black text-white px-4 py-2 m-2 rounded"
+                    (click)="openEditEducationModal(education)">Edit</button>
+                  <button mat-button class="mt-6 bg-red-700 text-white px-4 py-2 m-2 rounded"
+                    (click)="showModal('education', education)">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="mt-6 bg-black text-white px-4 py-2 rounded" (click)="openAddEducationModal()">Add
+            Education</button>
+          <div>
+            <h2 class="font-semibold mb-4">Experience</h2>
+            <div class="grid grid-cols-4 gap-4">
+              <ng-container *ngFor="let exp of candidateData.experience">
+                <ng-container *ngIf="!exp.isFresher; else fresherTemplate">
+                  <div class="bg-gray-100 p-4 rounded shadow-md">
+                    <div class="flex flex-col">
+                      <p class="font-semibold">Job Role: {{ exp.jobRole }}</p>
+                      <p class="font-semibold">Company Name: {{ exp.companyName }}</p>
+                      <p class="font-semibold">Experience Duration: {{ exp.experienceDuration }} Months</p>
+                      <div class="flex justify-end mt-2">
+                        <button mat-button class="mt-6 bg-black text-white px-4 py-2 m-2 rounded"
+                          (click)="openEditExperienceModal(exp)">Edit</button>
+                        <button mat-button class="mt-6 bg-red-700 text-white px-4 py-2 m-2 rounded"
+                          (click)="showModal('experience', exp)">Delete</button>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-template #fresherTemplate>
+                  <p class="font-normal text-lg">Fresher</p>
+                </ng-template>
+              </ng-container>
+            </div>
+            <button class="mt-6 bg-black text-white px-4 py-2 rounded" (click)="openAddExperienceModal()">Add
+              Experience</button>
+          </div>
+
+
+          <!-- Display existing skills -->
+          <div>
+            <h2 class="font-semibold">Skills</h2>
+            <div class="flex flex-wrap gap-2">
+              <mat-chip-listbox>
+                <mat-chip-option *ngFor="let skill of candidateData.skills" class="bg-gray-200">
+                  {{ skill }}
+                  <mat-icon matChipRemove (click)="deleteSkill(skill)">cancel</mat-icon>
+                </mat-chip-option>
+                <button  mat-fab class="fab-button ml-3" (click)="openSkillForm()">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </mat-chip-listbox>
+            </div>
+          </div>
+          
+          
+          
+          <!-- Add Skill Form -->
+          <form *ngIf="showSkillForm" #skillForm="ngForm" (ngSubmit)="addSkill()">
+            <mat-form-field appearance="fill">
+              <mat-label>Enter new skill</mat-label>
+              <input matInput name="newSkill" [(ngModel)]="newSkill" [matAutocomplete]="auto" required>
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected()">
+                <mat-option *ngFor="let filteredSkill of filteredSkills" [value]="filteredSkill">
+                  {{ filteredSkill }}
+                </mat-option>
+              </mat-autocomplete>
+              <div matSuffix>
+                <button mat-button mat-icon-button color="primary" type="submit" [disabled]="!skillForm.valid">
+                  <mat-icon>keyboard_arrow_right</mat-icon>
+                </button>
+              </div>
+            </mat-form-field>
+          </form>
+          
+          
+          
+          <div>
+            <h3 class="font-semibold">Resume: <a [href]="candidateData.resume" target="_blank"
+                class="text-blue-600 hover:underline">View Resume</a></h3>
+          </div>
+        </div>
+        <button class="mt-6 bg-red-500 text-white px-4 py-2 rounded">Report A Problem</button>
+      </div>
+
+      <!-- Modal -->
+      <div *ngIf="isModalVisible" id="popup-modal" tabindex="-1"
+        class="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <button (click)="hideModal()" type="button"
+              class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+              <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+              </svg>
+              <span class="sr-only">Close modal</span>
+            </button>
+            <div class="p-4 md:p-5 text-center">
+              <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to Delete this
+                Field?</h3>
+              <button (click)="confirmAction()" type="button"
+                class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                Yes, I'm sure
+              </button>
+              <button (click)="hideModal()" type="button"
+                class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                No, cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <app-footer></app-footer>
+</div>

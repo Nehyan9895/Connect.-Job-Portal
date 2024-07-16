@@ -1,4 +1,4 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -12,6 +12,10 @@ import { sharedRoute } from './routes/shared.route';
 import { adminRoute } from './routes/admin.route';
 import { userAuthInterceptor } from './services/interceptor/user-auth.interceptor';
 import { recruiterAuthInterceptor } from './services/interceptor/recruiter-auth.interceptor';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+
+
+const config: SocketIoConfig = { url: 'http://localhost:5001', options: {} };
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,6 +41,7 @@ export const appConfig: ApplicationConfig = {
       progressAnimation: 'decreasing' 
 
     }), provideAnimationsAsync(), provideAnimationsAsync(),
+    importProvidersFrom(SocketIoModule.forRoot(config)),  
     
   ]
 };

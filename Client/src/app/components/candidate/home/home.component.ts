@@ -28,6 +28,7 @@ export class HomeComponent implements OnInit {
   constructor(private userService: userService, private toastr: ToastrService, private router: Router) {}
 
   ngOnInit(): void {
+    
     const candidateId = localStorage.getItem('user_id'); 
     if (candidateId) {
       this.userService.getJobsForCandidate(candidateId).subscribe((data) => {
@@ -35,11 +36,25 @@ export class HomeComponent implements OnInit {
         this.jobs = data.data;
         this.length = this.jobs.length;
         this.updateDisplayedJobs();
+        this.sortJobs();
       });
     } else {
       this.toastr.error('User ID not found in local storage', 'Error');
     }
+    
   }
+
+  sortJobs(): void {
+    // Separate applied and non-applied jobs
+    const appliedJobs = this.displayedJobs.filter(job => job.applied);
+    const nonAppliedJobs = this.displayedJobs.filter(job => !job.applied);
+
+    // Concatenate non-applied jobs followed by applied jobs
+    this.displayedJobs = [...nonAppliedJobs, ...appliedJobs];
+    console.log(this.displayedJobs);
+    
+  }
+
 
   updateDisplayedJobs(): void {
     const start = this.pageIndex * this.pageSize;

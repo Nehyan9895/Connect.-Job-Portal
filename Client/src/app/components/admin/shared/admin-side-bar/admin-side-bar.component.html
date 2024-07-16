@@ -1,11 +1,11 @@
-<aside class="col-span-1 bg-white p-4 rounded-lg shadow">
+<aside class="w-full h-full new-bg p-4 space-y-4">
     <nav>
         <ul class="space-y-4">
-            <li><a href="#" class="block bg-[#4b21c7] p-2 rounded text-center text-white hover:bg-[#5b28e5]">Dashboard</a></li>
-            <li><a href="#" [routerLink]="['/admin/user-list']" class="block bg-[#4b21c7] p-2 rounded text-center text-white hover:bg-[#5b28e5]">Users</a></li>
-            <li><a href="#" [routerLink]="['/admin/recruiter-list']" class="block bg-[#4b21c7] p-2 rounded text-center text-white hover:bg-[#5b28e5]">Employers</a></li>
-            <li><a href="#" class="block bg-[#4b21c7] p-2 rounded text-center text-white hover:bg-[#5b28e5]">Issues</a></li>
-            <li><a href="#" (click)="logout()" class="block bg-[#4b21c7] p-2 rounded text-center text-white hover:bg-[#5b28e5]">Logout</a></li>
+            <li><a href="#" [routerLink]="['/admin/dashboard']" routerLinkActive="active" class="nav-link">Dashboard</a></li>
+            <li><a href="#" [routerLink]="['/admin/user-list']" routerLinkActive="active" class="nav-link">Users</a></li>
+            <li><a href="#" [routerLink]="['/admin/recruiter-list']" routerLinkActive="active" class="nav-link">Employers</a></li>
+            <li><a href="#" class="nav-link" routerLinkActive="active">Issues</a></li>
+            <li><a href="#" (click)="logout()" class="nav-link" routerLinkActive="active">Logout</a></li>
         </ul>
     </nav>
 </aside>

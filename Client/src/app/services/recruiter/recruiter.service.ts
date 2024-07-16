@@ -14,8 +14,8 @@ export class RecruiterService {
 
   private token: string | null = null;
   private jwtHelper = new JwtHelperService();
-  
-  constructor(private http:HttpClient,private router:Router,@Inject(PLATFORM_ID) private platformId: Object) { }
+
+  constructor(private http: HttpClient, private router: Router, @Inject(PLATFORM_ID) private platformId: Object) { }
 
   private apiKey = environment.recruiterApiKey
 
@@ -27,50 +27,75 @@ export class RecruiterService {
     }
     return this.token;
   }
-  
+
 
   isLoggedIn(): boolean {
     if (isPlatformBrowser(this.platformId)) {
       const token = this.getToken();
-      const isTrue =  token ? !this.jwtHelper.isTokenExpired(token) : false;
+      const isTrue = token ? !this.jwtHelper.isTokenExpired(token) : false;
       console.log(isTrue);
       return isTrue
-      
+
     }
     return false;  // default to not logged in if not in browser context
   }
 
-  login(data:object):Observable<any>{
-    return this.http.post(`${this.apiKey}/login`,data)
+  login(data: object): Observable<any> {
+    return this.http.post(`${this.apiKey}/login`, data)
   }
 
 
   profile(recruiterData: FormData): Observable<any> {
-    return this.http.post(`${this.apiKey}/profile`, recruiterData);
+    return this.http.post(`${this.apiKey}/add-profile`, recruiterData);
   }
 
-  createJob(email:string,jobData:object):Observable<any>{
-    const data = {email,jobData}
-    return this.http.post(`${this.apiKey}/create-job`,data)
+  getUser(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiKey}/candidate-details/${id}`)
   }
 
-  getJobs(userId:string): Observable<any> {
+  getProfile(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiKey}/recruiter/profile/${id}`);
+}
+
+
+  createJob(email: string, jobData: object): Observable<any> {
+    const data = { email, jobData }
+    return this.http.post(`${this.apiKey}/create-job`, data)
+  }
+
+  getJobs(userId: string): Observable<any> {
     return this.http.get<any>(`${this.apiKey}/home/${userId}`);
   }
 
-  getJobByJobID(job_id:string):Observable<any>{
+  getJobByJobID(job_id: string): Observable<any> {
     return this.http.get<any>(`${this.apiKey}/edit-job/${job_id}`)
   }
 
-  updateJob(jobData:object):Observable<any>{
-    return this.http.post<any>(`${this.apiKey}/edit-job`,jobData)
+  updateJob(jobData: object): Observable<any> {
+    return this.http.post<any>(`${this.apiKey}/edit-job`, jobData)
   }
 
-  getApplications(jobId:string):Observable<any>{
+  getApplications(jobId: string): Observable<any> {
     return this.http.get<any>(`${this.apiKey}/applicants/${jobId}`)
   }
 
-  logout():void{
+  updateApplicationReviewed(applicationId: string): Observable<any> {
+    return this.http.put<any>(`${this.apiKey}/applicants/${applicationId}`, {});
+  }
+
+  updateResumeViewed(applicationId: string): Observable<any> {
+    return this.http.put<any>(`${this.apiKey}/applicants/view-resume/${applicationId}`, {});
+  }
+
+  // recruiter.service.ts
+updateApplicationStatus(applicationId: string, status: string): Observable<any> {
+  return this.http.put<any>(`${this.apiKey}/applicants/status/${applicationId}`, { status });
+}
+
+
+
+  logout(): void {
+    this.token = null;
     localStorage.removeItem('recruiterToken');
     this.router.navigate(['/recruiter/login'])
   }
@@ -78,11 +103,12 @@ export class RecruiterService {
   private jobsData: any[] = [];
 
   setJobs(jobs: any[]) {
-    this.jobsData = jobs;
+    localStorage.setItem('jobs', JSON.stringify(jobs));
   }
 
   getJobsLocal() {
-    return this.jobsData;
+    const jobData = localStorage.getItem('jobs');
+    return jobData ? JSON.parse(jobData) : [];
   }
 
 

@@ -107,5 +107,40 @@ export class userService {
   getJobApplications(userId: any): Observable<any> {
     return this.http.get<any>(`${this.apiKey}/applied-jobs/${userId}`);
   }
+
+  getJobApplicationStatistics(id:string):Observable<any>{
+    return this.http.get<any>(`${this.apiKey}/job-application-statistics/${id}`)
+  }
+
+  getCandidateDetails(id:string):Observable<any>{
+    return this.http.get<any>(`${this.apiKey}/profile/${id}`)
+  }
+
+  updateCandidateEducation(userId: string, educationData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiKey}/profile/education/${userId}`, educationData);
+  }
+
+  updateCandidateExperience(userId: string, experienceData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiKey}/profile/experience/${userId}`, experienceData);
+  }
+
+  updateCandidateSkills(userId: string, skills: string[]): Observable<any> {
+    return this.http.put<any>(`${this.apiKey}/profile/skills/${userId}`, skills);
+  }
+
+  updateCandidateProfile(id: string, profileData: any): Observable<any> {
+    return this.http.put(`${this.apiKey}/profile/${id}`, profileData);
+  }
+
+
+  getMessagedUsers(userId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiKey}/users/${userId}/messaged-users`);
+  }
+
+  getUser(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiKey}/recruiter-details/${id}`)
+  }
+  
+  
   
 }

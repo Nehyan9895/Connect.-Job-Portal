@@ -6,13 +6,13 @@ import fileUpload from "../helpers/fileUpload";
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
+import { recruiterRepository } from "../repositories/recruiterRepository";
 
 const OTP_EXPIRY_TIME = 60; // 1 minute in seconds
 const JWT_SECRET = process.env.JWT_SECRET || 'myjwtsecret';
 
 class UserService {
     async signup(userData: any) {
-        console.log(typeof userData);
         
         const existingUser = await userRepository.findUserByEmail(userData.email);
         if (existingUser) {
@@ -97,8 +97,6 @@ class UserService {
     async userLogin(email:string,password:string){
         const user = await userRepository.findUserByEmail(email);
         
-        console.log(password,'dsfafddfsdfdsfdfeferereerer');
-        console.log(user,'dsfhuuseruseruser');
         
         if(!user||user.isEmployee){
             throw new Error('user not exists')
@@ -115,7 +113,7 @@ class UserService {
         }
 
         const token = jwt.sign({email:user.email,id:user._id},JWT_SECRET,{expiresIn:'10h'});
-        return {token,user:{email:user.email,id:user._id,username:user.username,is_done:user.is_done},message:'Candidate login successful'}
+        return {token,user:{email:user.email,id:user._id,username:user.username,is_done:user.is_done,image:user.image},message:'Candidate login successful'}
     }
 
     
@@ -224,7 +222,32 @@ class UserService {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         return await userRepository.updateUserPassword(email, hashedPassword);
     }
+
+    async updateCandidateEducation(userId: string, educationData: any){
+        const candidate = await candidateRepository.updateCandidateEducation(userId, educationData);
+        return candidate;
+      }
+
+      async updateCandidateExperience(userId: string, experienceData: any): Promise<any> {
+        const candidate = await candidateRepository.updateCandidateExperience(userId,experienceData)
+        return candidate;
+      }
+      
+      async updateCandidateSkills(userId: string, skills: any): Promise<any> {
+        const candidate = await candidateRepository.updateCandidateSkills(userId,skills)
+        return candidate;
+      }
+
+      async updateCandidateProfile(userId:string,candidateData:any){
+          const candidate = await candidateRepository.updateCandidateProfile(userId,candidateData)
+          return candidate
+      }
     
+      async getRecruiterById(id:string){
+        const candidate = await recruiterRepository.findRecruiterByUserId2(id)
+        return candidate
+      }
+
 }
 
 export const userService = new UserService();

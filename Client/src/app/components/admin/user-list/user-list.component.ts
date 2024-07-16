@@ -5,82 +5,111 @@ import { AdminBackendService } from '../../../services/admin/admin.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
+import { FooterComponent } from "../../candidate/shared/footer/footer.component";
 
 @Component({
     selector: 'app-user-list',
     standalone: true,
     templateUrl: './user-list.component.html',
     styleUrl: './user-list.component.scss',
-    imports: [AdminHeaderComponent, AdminSideBarComponent,CommonModule,MatPaginator]
+    imports: [AdminHeaderComponent, AdminSideBarComponent, CommonModule, MatPaginator, FooterComponent]
 })
 export class UserListComponent implements OnInit {
-    users: any[] = [];
-    displayedUsers: any[] = [];
-    isLoading: boolean = true;
+  users: any[] = [];
+  displayedUsers: any[] = [];
+  isLoading: boolean = true;
+  isModalVisible = false;
+  selectedUser: any; 
 
-    length = 0;
-    pageSize = 5;
-    pageIndex = 0;
-    pageSizeOptions = [5, 10, 15];
+  length = 0;
+  pageSize = 5;
+  pageIndex = 0;
+  pageSizeOptions = [5, 10, 15];
 
-    @ViewChild(MatPaginator) paginator !: MatPaginator;
+  @ViewChild(MatPaginator) paginator !: MatPaginator;
 
-    constructor(private adminBackend:AdminBackendService,private toastr:ToastrService){}
+  constructor(private adminBackend: AdminBackendService, private toastr: ToastrService) { }
 
-    ngOnInit(): void {
-      this.loadUsers();
-    }
-  
-    loadUsers(): void {
-      this.adminBackend.getUsers().subscribe(
-        data => {
-          this.users = data;
-          this.length = this.users.length;
-          this.updateDisplayedUsers();
-          this.isLoading = false;
-        },
-        error => {
-          console.error('Error fetching users:', error);
-          this.isLoading = false;
-        }
-      );
-    }
-  
-    updateDisplayedUsers(): void {
-      const start = this.pageIndex * this.pageSize;
-      const end = start + this.pageSize;
-      this.displayedUsers = this.users.slice(start, end);
-    }
-  
-    handlePageEvent(event: any): void {
-      this.pageIndex = event.pageIndex;
-      this.pageSize = event.pageSize;
-      this.updateDisplayedUsers();
-    }
-  
-    toggleVerificationStatus(user: any): void {
-      if (!user) {
-        console.error('User data is not available');
-        return;
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.adminBackend.getUsers().subscribe(
+      data => {
+        this.users = data.data;
+        this.length = this.users.length;
+        this.updateDisplayedUsers();
+        this.isLoading = false;
+      },
+      error => {
+        console.error('Error fetching users:', error);
+        this.isLoading = false;
       }
-  
-      const newStatus = !user.is_verified;
-      this.adminBackend.updateUserVerificationStatus(user._id, newStatus).subscribe(
-        updatedUser => {
-          if (updatedUser) {
-            user.is_verified = updatedUser.is_verified;
-            const status = updatedUser.is_verified ? 'unblocked' : 'blocked';
+    );
+  }
+
+  updateDisplayedUsers(): void {
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.displayedUsers = this.users.slice(start, end);
+  }
+
+  handlePageEvent(event: any): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updateDisplayedUsers();
+  }
+
+  toggleVerificationStatus(user: any): void {
+    if (!user) {
+      console.error('User data is not available');
+      return;
+    }
+
+    
+
+    const newStatus = !user.is_verified;
+    this.adminBackend.updateUserVerificationStatus(user._id, newStatus).subscribe({
+      next: (updatedUser) => {
+        if (updatedUser) {
+          console.log(updatedUser);
+          user.is_verified = updatedUser.data.is_verified;
+
+          const status = updatedUser.data.is_verified ? 'Unblocked' : 'Blocked';
+
+          if (updatedUser.data.is_verified) {
             this.toastr.success(`User is now ${status}`, 'Success');
           } else {
-            console.error('Failed to update user status');
-            this.toastr.error('Failed to update user status', 'Error');
+            this.toastr.warning(`User is now ${status}`, 'Warning');
           }
-        },
-        error => {
-          console.error('Error updating user status:', error);
-          this.toastr.error('Error updating user status', 'Error');
+
+        } else {
+          console.error('Failed to update user status');
+          this.toastr.error('Failed to update user status', 'Error');
         }
-      );
-    }
+      },
+      error: (error) => {
+        console.error('Error updating user status:', error);
+        this.toastr.error('Error updating user status', 'Error');
+      }
+    });
+  }
+
+  showModal(user: any): void {
+    this.selectedUser = user;
+    this.isModalVisible = true;
+  }
+
+  hideModal(): void {
+    this.isModalVisible = false;
+  }
+
+  confirmAction(): void {
+    this.toggleVerificationStatus(this.selectedUser)
+    this.hideModal();
+  }
+
   
+
 }

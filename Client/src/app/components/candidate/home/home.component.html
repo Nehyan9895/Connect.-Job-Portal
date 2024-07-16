@@ -14,43 +14,74 @@
   <!-- Main Content -->
   <main class="flex flex-col md:flex-row mt-6 space-y-4 md:space-y-0 md:space-x-4">
     <!-- Filters -->
-    <aside class="w-full md:w-64 bg-[#e2e2ff] p-4 ml-2 rounded-lg h-auto md:h-[90vh]">
-      <h2 class="font-bold mb-2">Filters</h2>
-      <div class="mb-4">
-        <h3 class="font-semibold">Date Posted</h3>
-        <div class="space-y-1">
-          <div><input type="radio" id="all" name="date" checked> <label for="all">All</label></div>
-          <div><input type="radio" id="7days" name="date"> <label for="7days">Last 7 Days</label></div>
-          <div><input type="radio" id="30days" name="date"> <label for="30days">Last 30 Days</label></div>
+    <aside class="w-full md:w-64 bg-gray-100 p-4 ml-2 rounded-lg shadow-lg h-auto md:h-[90vh]">
+      <h2 class="text-xl font-bold mb-4 text-center">Filters</h2>
+    
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold mb-2">Date Posted</h3>
+        <div class="space-y-2">
+          <label for="all" class="flex items-center cursor-pointer">
+            <input type="radio" id="all" name="date" checked class="mr-2">
+            <span>All</span>
+          </label>
+          <label for="7days" class="flex items-center cursor-pointer">
+            <input type="radio" id="7days" name="date" class="mr-2">
+            <span>Last 7 Days</span>
+          </label>
+          <label for="30days" class="flex items-center cursor-pointer">
+            <input type="radio" id="30days" name="date" class="mr-2">
+            <span>Last 30 Days</span>
+          </label>
         </div>
       </div>
-      <div class="mb-4">
-        <h3 class="font-semibold">Salary</h3>
-        <input type="range" min="10000" max="100000" step="1000" class="w-full" id="salaryRange"
-          oninput="updateSalaryValue(this.value)">
-        <div class="text-sm mt-2 text-gray-700">₹ <span id="salaryValue">10000</span></div>
-      </div>
-      <div class="mb-4">
-        <h3 class="font-semibold">Work Mode</h3>
-        <div class="space-y-1">
-          <div><input type="radio" id="workfromhome" name="workmode" checked> <label for="workfromhome">Work from
-              Home</label></div>
-          <div><input type="radio" id="workfromoffice" name="workmode"> <label for="workfromoffice">Work from
-              Office</label></div>
+    
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold mb-2">Salary Range</h3>
+        <input type="range" min="10000" max="100000" step="1000" class="w-full bg-gray-200 rounded-lg" id="salaryRange">
+        <div class="flex justify-between mt-2 text-sm text-gray-700">
+          <span>₹ 10,000</span>
+          <span>₹ 100,000</span>
         </div>
       </div>
-      <div class="mb-4">
-        <h3 class="font-semibold">Work Type</h3>
-        <div class="space-y-1">
-          <div><input type="radio" id="fulltime" name="worktype" checked> <label for="fulltime">Full Time</label></div>
-          <div><input type="radio" id="parttime" name="worktype"> <label for="parttime">Part Time</label></div>
+    
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold mb-2">Work Mode</h3>
+        <div class="space-y-2">
+          <label for="workfromhome" class="flex items-center cursor-pointer">
+            <input type="radio" id="workfromhome" name="workmode" checked class="mr-2">
+            <span>Work from Home</span>
+          </label>
+          <label for="workfromoffice" class="flex items-center cursor-pointer">
+            <input type="radio" id="workfromoffice" name="workmode" class="mr-2">
+            <span>Work from Office</span>
+          </label>
         </div>
       </div>
+    
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold mb-2">Work Type</h3>
+        <div class="space-y-2">
+          <label for="fulltime" class="flex items-center cursor-pointer">
+            <input type="radio" id="fulltime" name="worktype" checked class="mr-2">
+            <span>Full Time</span>
+          </label>
+          <label for="parttime" class="flex items-center cursor-pointer">
+            <input type="radio" id="parttime" name="worktype" class="mr-2">
+            <span>Part Time</span>
+          </label>
+        </div>
+      </div>
+    
       <div class="flex space-x-2">
-        <button class="bg-[#001b80] text-white px-4 py-2 rounded-lg w-full">Apply filter</button>
-        <button class="bg-gray-400 text-white px-4 py-2 rounded-lg w-full">Reset</button>
+        <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg w-full transition duration-300 ease-in-out">
+          Apply Filter
+        </button>
+        <button class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg w-full transition duration-300 ease-in-out">
+          Reset
+        </button>
       </div>
     </aside>
+    
 
 
 

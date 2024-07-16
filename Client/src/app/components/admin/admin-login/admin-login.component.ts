@@ -35,9 +35,9 @@ export class AdminLoginComponent {
       this.adminBackend.login(this.loginForm.value).subscribe({
         next:(response)=>{
           console.log(response);
-          localStorage.setItem('adminToken',response.token)
-          localStorage.setItem('admin',response.admin)
-          this.toastr.success(response.message,'Success')
+          localStorage.setItem('adminToken',response.data.token)
+          localStorage.setItem('admin',response.data.admin)
+          this.toastr.success(response.data.message,'Success')
           this.router.navigate(['/admin/dashboard'])
         },
         error: (error) => {

@@ -9,6 +9,7 @@ import { MessagesComponent } from "../components/recruiter/messages/messages.com
 import { recruiterFalseAuthGuard } from "../guard/recruiter-false-auth.guard";
 import { JobApplicantsComponent } from "../components/recruiter/job-applicants/job-applicants.component";
 import { ApplicationsComponent } from "../components/recruiter/applications/applications.component";
+import { RecruiterProfilePageComponent } from "../components/recruiter/recruiter-profile-page/recruiter-profile-page.component";
 
 export const recruiterRoute : Routes = [
     {
@@ -23,6 +24,11 @@ export const recruiterRoute : Routes = [
     },
     {
         path:'recruiter/profile',
+        component:RecruiterProfilePageComponent,
+        canActivate:[recruiterAuthGuard]
+    },
+    {
+        path:'recruiter/add-profile',
         component:RecruiterProfileComponent,
         canActivate:[recruiterAuthGuard]
     },
@@ -48,6 +54,12 @@ export const recruiterRoute : Routes = [
     },
     {
         path:'recruiter/applicants',
-        component:JobApplicantsComponent
+        component:JobApplicantsComponent,
+        canActivate:[recruiterAuthGuard]
+    },
+    {
+        path:'recruiter/chat/:recruiterId/:candidateId',
+        component:MessagesComponent,
+        canActivate:[recruiterAuthGuard]
     }
 ]

@@ -1,98 +1,140 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
 import { RecruiterHeaderComponent } from "../shared/recruiter-header/recruiter-header.component";
 import { WebsocketService } from '../../../services/websocket/websocket.service';
-import { Subscription } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { filter, Observable, Subscription } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
+import { CommonModule, DatePipe } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { ChatI } from '../../../models/chat.model';
+import { ToastrService } from 'ngx-toastr';
+import { userService } from '../../../services/users/user.service';
+import { ChatHeaderComponent } from "../shared/chat-header/chat-header.component";
+import { RecruiterSidebarComponent } from "../shared/recruiter-sidebar/recruiter-sidebar.component";
+import { RecruiterService } from '../../../services/recruiter/recruiter.service';
 
 @Component({
     selector: 'app-messages',
     standalone: true,
     templateUrl: './messages.component.html',
     styleUrl: './messages.component.scss',
-    imports: [FooterComponent, RecruiterHeaderComponent,CommonModule,FormsModule,]
+    providers: [DatePipe],
+    imports: [FooterComponent, RecruiterHeaderComponent, CommonModule, FormsModule, ChatHeaderComponent, RecruiterSidebarComponent,RouterLink,]
 })
 
 
-export class MessagesComponent implements OnInit, OnDestroy {
-    messages: any[] = [];
-    chatRooms: any[] = [];
-    chatRoomId: string | null | undefined;
-    newMessage: string = '';
-    subscriptions: Subscription[] = [];
-    currentUserId: string = 'current_user_id'; // Replace with actual current user ID
-    selectedChatRoomUser: string | null = null;
-    recentChatUsers: { chatRoomId: string, username: string }[] = [];
-  
-    constructor(
-      private websocketService: WebsocketService,
-      private route: ActivatedRoute,
-      private router: Router
-    ) {}
-  
-    ngOnInit(): void {
-      this.chatRoomId = this.route.snapshot.paramMap.get('id');
-      this.loadChatRooms();
-      if (this.chatRoomId) {
-        this.joinRoom(this.chatRoomId);
-      }
+export class MessagesComponent implements OnInit, AfterViewChecked, OnDestroy {
+  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
+
+  userImage!: string;
+  username!: string;  
+                                   
+  recruiterId: string | null = null;
+  candidateId: string | null = null;
+  message!: string;
+  messages: ChatI[] = [];
+  isFriendOnline$: Observable<boolean> | undefined;
+
+  private paramSubscription!: Subscription;
+  private messagesSubscription!: Subscription;
+  private lastMessageSubscription!: Subscription;
+  private routerSubscription!: Subscription;
+
+  constructor(
+    private router: Router,
+    private datePipe: DatePipe,
+    private route: ActivatedRoute,
+    private chatService: WebsocketService,
+    private toaster: ToastrService,
+    private recruiterService: RecruiterService
+  ) { }
+
+  ngOnInit(): void {
+    this.paramSubscription = this.route.paramMap.subscribe((params) => {
+      this.recruiterId = params.get('recruiterId');
+      this.candidateId = params.get('candidateId');
+      this.initializeChat();
+    });
+
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.initializeChat();
+    });
+
+    if (this.recruiterId) {
+      this.chatService.connectUser(this.recruiterId);
     }
+
+    // Fetch user data
+    if(this.candidateId){
+    this.recruiterService.getUser(this.candidateId).subscribe(user => {
+      console.log(user,'thisis user from ther');
+      
+      this.userImage = user.data.image;
+      this.username = user.data.fullName;
+    });
+  }
+  }
+
+  initializeChat(): void {
+    this.messages = [];
   
-    loadChatRooms(): void {
-      const recruiterId = this.currentUserId; // Replace with actual recruiter ID
-      this.websocketService.getChatRoomsByRecruiter(recruiterId).subscribe((rooms: any[]) => {
-        this.chatRooms = rooms;
-        this.recentChatUsers = rooms.map(room => {
-          const otherUser = room.members.find((m: any) => m._id !== this.currentUserId);
-          return { chatRoomId: room._id, username: otherUser?.username || 'Unknown' };
-        });
-        if (this.chatRoomId) {
-          this.updateSelectedChatRoomUser(this.chatRoomId);
-        }
-      });
+    if (this.recruiterId && this.candidateId) {
+      this.chatService.joinDirectChat(this.recruiterId, this.candidateId);
+      this.isFriendOnline$ = this.chatService.isUserOnline(this.candidateId);
+    } else {
+      this.toaster.error('Error', 'Something Went Wrong. Please Try Again');
     }
-  
-    joinRoom(chatRoomId: string): void {
-      this.websocketService.joinRoom(chatRoomId);
-      const messageSubscription = this.websocketService.onNewMessage().subscribe((message: any) => {
-        this.messages.push(message);
-      });
-      this.subscriptions.push(messageSubscription);
-    }
-  
-    sendMessage(): void {
-      if (this.newMessage.trim() !== '') {
-        const message = {
-          chatRoom_id: this.chatRoomId,
-          text: this.newMessage,
-          sender_id: this.currentUserId, // Replace with the actual sender's ID
-          receiver_id: 'receiver_user_id' // Replace with the actual receiver's ID
-        };
-        this.websocketService.sendMessage(message);
-        this.newMessage = '';
-      }
-    }
-  
-    selectChatRoom(chatRoomId: string): void {
-      this.router.navigate(['/recruiter/chat', chatRoomId]).then(() => {
-        this.updateSelectedChatRoomUser(chatRoomId);
-      });
-    }
-  
-    updateSelectedChatRoomUser(chatRoomId: string): void {
-      const selectedRoom = this.chatRooms.find(room => room._id === chatRoomId);
-      if (selectedRoom) {
-        const otherUser = selectedRoom.members.find((m: any) => m._id !== this.currentUserId);
-        this.selectedChatRoomUser = otherUser?.username || 'Unknown';
-      }
-    }
-  
-    ngOnDestroy(): void {
-      this.subscriptions.forEach(sub => sub.unsubscribe());
+
+    this.messagesSubscription = this.chatService.getAllMessages().subscribe(msg => {
+      console.log(msg,'msghgosidhfdshf');
+      
+      this.messages = msg;
+      this.scrollToBottom();
+    });
+
+    this.lastMessageSubscription = this.chatService.getLastMessage().subscribe((msg) => {
+      this.messages.push(msg);
+      this.scrollToBottom();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.paramSubscription?.unsubscribe();
+    this.messagesSubscription?.unsubscribe();
+    this.lastMessageSubscription?.unsubscribe();
+    this.routerSubscription?.unsubscribe();
+    if (this.recruiterId) {
+      this.chatService.disconnectUser();
     }
   }
-  
-  
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
+
+  formatTime(dateString: Date): string {
+    return this.datePipe.transform(dateString, 'shortTime')!;
+  }
+
+  sendMessage() {
+    if (this.recruiterId && this.candidateId && this.message.trim()) {
+      this.chatService.sendDirectMessage(this.recruiterId, this.candidateId, this.message);
+      this.message = '';
+    } else {
+      this.toaster.error('Something went wrong. Try logging in again.');
+    }
+  }
+
+  isCurrentUser(senderId: string): boolean {
+    return senderId === this.recruiterId;
+  }
+
+  private scrollToBottom(): void {
+    try {
+      this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
+    } catch (err) { }
+  }
+}

@@ -35,7 +35,7 @@ const jobApplicationSchema = new Schema<IJobApplication>({
     },
     result:{
         type:String,
-        enum:['Result','Accepted','Rejected'],
+        enum:['Result','Accepted for Interview','Rejected'],
         default:'Result'
     }
 })

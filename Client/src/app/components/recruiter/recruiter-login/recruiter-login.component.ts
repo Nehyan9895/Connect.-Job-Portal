@@ -42,13 +42,13 @@ export class RecruiterLoginComponent {
           console.log(response,'reseress');
           localStorage.setItem('recruiterToken',response.data.token)
           localStorage.setItem('recruiter_id',response.data.recruiter.id)
-          const recruiter = response.recruiter
+          const recruiter = response.data.recruiter
           this.toastr.success(response.data.message,'Success')
-          // if(recruiter.is_done){
+          if(recruiter.is_done){
           this.router.navigate(['/recruiter/home'])
-          // }else{
-          //   this.router.navigate(['/recruiter/profile'])
-          // }
+          }else{
+            this.router.navigate(['/recruiter/add-profile'])
+          }
         },
         error: (error) => {
           this.toastr.error(error.error.error, 'Error');

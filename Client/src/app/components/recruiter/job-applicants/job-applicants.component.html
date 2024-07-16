@@ -18,7 +18,7 @@
       <ng-container *ngIf="candidates.length === 0">
         <p class="text-gray-500">No candidates found.</p>
       </ng-container>
-      <div *ngFor="let candidate of candidates" class="bg-gray-100 p-4 rounded-lg mb-6">
+      <div *ngFor="let candidate of candidates" class="bg-gray-100 p-4 rounded-lg mb-6 relative">
         <div class="flex flex-col mb-2">
           <h3 class="text-lg font-medium">{{ candidate.candidate_id.fullName }}</h3>
         </div>
@@ -35,28 +35,30 @@
               <span *ngFor="let skill of candidate.candidate_id.skills" class="bg-[#00EFFF] text-white py-1 px-2 rounded-md text-sm font-medium">{{ skill }}</span>
             </div>
           </div>
-          <a href="{{ candidate.candidate_id.resume }}" (click)="updateResumeViewed(candidate._id)" target="_blank" class="text-blue-600 hover:underline">View Resume</a>
+          <a href="{{ candidate.candidate_id.resume }}" target="_blank" (click)="viewResume(candidate)" class="text-blue-600 hover:underline">View Resume</a>
         </div>
         <div class="flex justify-end mt-4">
-          <button class="bg-green-500 text-white py-2 px-4 rounded-lg mr-2" [disabled]="!candidate.resume_viewed">Accept</button>
-          <button class="bg-red-500 text-white py-2 px-4 rounded-lg mr-2" [disabled]="!candidate.resume_viewed">Reject</button>
-          <!-- Replace the button with a clickable icon -->
+          <ng-container *ngIf="candidate.result !== 'Rejected'">
+            <ng-container *ngIf="candidate.resume_viewed">
+              <button class="bg-green-500 text-white py-2 px-4 rounded-lg mr-2" (click)="acceptApplication(candidate, 'Accepted for Interview')">Accept for Interview</button>
+              <button class="bg-red-500 text-white py-2 px-4 rounded-lg mr-2" (click)="acceptApplication(candidate, 'Rejected')">Reject</button>
+            </ng-container>
+          </ng-container>
           <div class="ml-auto">
-            <button class="text-blue-600 hover:text-blue-800" (click)="updateResumeViewed(candidate._id)">
+            <button class="text-blue-600 hover:text-blue-800" [routerLink]="['/recruiter/chat', recruiterId, candidate.candidate_id.user_id]">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
               </svg>
             </button>
           </div>
+          <ng-container *ngIf="candidate.result === 'Rejected'">
+            <span class="absolute top-4 right-4 flex items-center bg-red-200 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">
+              <i class="fas fa-check-circle mr-1"></i> Rejected
+            </span>
+          </ng-container>
         </div>
       </div>
-      <mat-paginator
-        *ngIf="candidates.length > 0"
-        [length]="length"
-        [pageSize]="pageSize"
-        [pageSizeOptions]="pageSizeOptions"
-        (page)="handlePageEvent($event)">
-      </mat-paginator>
+      <mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)"></mat-paginator>
     </section>
     
   </main>

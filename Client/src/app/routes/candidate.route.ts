@@ -12,6 +12,8 @@ import path from "path";
 import { ApplyJobComponent } from "../components/candidate/apply-job/apply-job.component";
 import { userFalseAuth } from "../guard/user-false-auth.guard";
 import { AppliedJobsComponent } from "../components/candidate/applied-jobs/applied-jobs.component";
+import { ProfilePageComponent } from "../components/candidate/profile-page/profile-page.component";
+import { ChatComponent } from "../components/candidate/chat/chat.component";
 
 export const candidateRoute : Routes = [
     {
@@ -39,8 +41,13 @@ export const candidateRoute : Routes = [
         component:OtpPageComponent
     },
     {
-        path:'candidate/profile',
+        path:'candidate/add-profile',
         component:UserPersonalProfileComponent,
+        canActivate:[userAuthGuard]
+    },
+    {
+        path:'candidate/profile',
+        component:ProfilePageComponent,
         canActivate:[userAuthGuard]
     },
     {
@@ -64,6 +71,11 @@ export const candidateRoute : Routes = [
     {
         path:'candidate/applied-jobs',
         component:AppliedJobsComponent,
+        canActivate:[userAuthGuard]
+    },
+    {
+        path:'candidate/messages',
+        component:ChatComponent,
         canActivate:[userAuthGuard]
     }
 ]

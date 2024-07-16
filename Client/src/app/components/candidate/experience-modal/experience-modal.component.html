@@ -1,0 +1,36 @@
+<h1 mat-dialog-title>{{ isEditMode ? 'Edit Experience' : 'Add Experience' }}</h1>
+<form [formGroup]="experienceForm" (ngSubmit)="onSave()">
+  <div mat-dialog-content class="custom-dialog-content">
+    <div class="mb-6">
+      <label for="jobRole" class="block mb-2 text-gray-700">Job Role</label>
+      <input formControlName="jobRole" id="jobRole" type="text"
+             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+    </div>
+
+    <div class="mb-6">
+      <label for="companyName" class="block mb-2 text-gray-700">Company Name</label>
+      <input formControlName="companyName" id="companyName" type="text"
+             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+    </div>
+
+    <div class="mb-6">
+      <label for="experienceDuration" class="block mb-2 text-gray-700">Experience Duration (Months)</label>
+      <input formControlName="experienceDuration" id="experienceDuration" type="number"
+             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+      <div *ngIf="experienceForm.get('experienceDuration')?.touched && experienceForm.get('experienceDuration')?.invalid"
+           class="text-red-500 mt-1">
+        <span *ngIf="experienceForm.get('experienceDuration')?.errors?.['required']">Experience Duration is required.</span>
+        <span *ngIf="experienceForm.get('experienceDuration')?.errors?.['pattern']">Experience Duration must be a number.</span>
+      </div>
+    </div>
+
+    <div class="mb-6" *ngIf="data.existingExperiences=== 0">
+      <input formControlName="isFresher" id="isFresher" type="checkbox">
+      <label for="isFresher" class="text-gray-700">Fresher</label>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button class="mt-6 bg-red-700 text-white px-4 py-2 m-2 rounded" type="button" (click)="onCancel()">Cancel</button>
+    <button mat-button class="mt-6 bg-black text-white px-4 py-2 m-2 rounded" type="submit">{{ isEditMode ? 'Save' : 'Add' }}</button>
+  </div>
+</form>

@@ -1,4 +1,5 @@
 import imageUpload from "../helpers/imageUpload";
+import { candidateRepository } from "../repositories/candidateRepository";
 import { recruiterRepository } from "../repositories/recruiterRepository";
 import { userRepository } from "../repositories/userRepository";
 import bcrypt from 'bcryptjs'
@@ -75,6 +76,11 @@ class RecruiterService{
         }
 
         return {recruiter,message:'Profile added successfully'};
+    }
+
+    async getCandidateById(userId:string){
+        const candidate = await candidateRepository.findCandidateByUserId(userId)
+        return candidate
     }
 }
 

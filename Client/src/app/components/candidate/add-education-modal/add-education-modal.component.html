@@ -1,0 +1,70 @@
+<h1 mat-dialog-title>{{ data.education ? 'Edit Education' : 'Add Education' }}</h1>
+<form [formGroup]="educationForm" (ngSubmit)="onSave()">
+  <div mat-dialog-content>
+    <div class="mb-6">
+      <label for="qualification" class="block mb-2 text-gray-700">Education Qualification</label>
+      <select formControlName="qualification" id="qualification"
+              class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+        <option value="">Select Education Qualification</option>
+        <option value="10th">10th</option>
+        <option value="12th">Higher Secondary</option>
+        <option value="UG">UG</option>
+        <option value="PG">PG</option>
+        <option value="PhD">PhD</option>
+        <option value="ITI">ITI</option>
+        <option value="Diploma">Diploma</option>
+      </select>
+      <div *ngIf="educationForm.get('qualification')?.touched && educationForm.get('qualification')?.invalid" class="text-red-500 mt-1">
+        <span *ngIf="educationForm.get('qualification')?.errors?.['required']">Education Qualification is required.</span>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label for="specialization" class="block mb-2 text-gray-700">Specialization</label>
+      <input formControlName="specialization" id="specialization" type="text"
+             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+    </div>
+
+    <div class="mb-6">
+      <label for="nameOfInstitution" class="block mb-2 text-gray-700">Name of Institution</label>
+      <input formControlName="nameOfInstitution" id="nameOfInstitution" type="text"
+             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+    </div>
+
+    <div class="mb-6">
+      <label for="passoutYear" class="block mb-2 text-gray-700">Passout Year and Month</label>
+      <div class="flex">
+        <select formControlName="passoutYear" id="passoutYear"
+                class="w-1/2 mr-2 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+          <option value="">Year</option>
+          <ng-container *ngFor="let year of getYearOptions()">
+            <option [value]="year">{{ year }}</option>
+          </ng-container>
+        </select>
+        <select formControlName="passoutMonth" id="passoutMonth"
+                class="w-1/2 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+          <option value="">Month</option>
+          <option value="January">January</option>
+          <option value="February">February</option>
+          <option value="March">March</option>
+          <option value="April">April</option>
+          <option value="May">May</option>
+          <option value="June">June</option>
+          <option value="July">July</option>
+          <option value="August">August</option>
+          <option value="September">September</option>
+          <option value="October">October</option>
+          <option value="November">November</option>
+          <option value="December">December</option>
+        </select>
+      </div>
+      <div *ngIf="educationForm.get('passoutYear')?.touched && educationForm.get('passoutYear')?.invalid" class="text-red-500 mt-1">
+        <span *ngIf="educationForm.get('passoutYear')?.errors?.['pattern']">Passout Year must be a 4-digit number.</span>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button class="mt-6 bg-black text-white px-4 py-2 m-2 rounded" type="button" (click)="onCancel()">Cancel</button>
+    <button mat-button class="mt-6 bg-red-700 text-white px-4 py-2 m-2 rounded" type="submit">Save</button>
+  </div>
+</form>

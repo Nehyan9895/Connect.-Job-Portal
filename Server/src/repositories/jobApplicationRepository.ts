@@ -26,6 +26,9 @@ class JobApplicationRepository {
         return await JobApplication.find({ job_id: jobId }).populate('job_id').populate('candidate_id');
       }
     
+      async updateApplicationStatus(applicationId: string, updateData: any) {
+        return await JobApplication.findByIdAndUpdate(applicationId, updateData, { new: true });
+    }
     
 
 }

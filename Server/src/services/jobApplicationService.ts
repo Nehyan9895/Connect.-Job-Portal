@@ -65,6 +65,33 @@ class JobApplicationService {
         return jobApplications;
       }
     
+      async getJobApplicationStatistics(userId: string) {
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+          throw new Error('Invalid user ID format');
+        }
+    
+        const candidate = await candidateRepository.findCandidateByUserId(userId);
+        if (!candidate) {
+          throw new Error('Candidate not found');
+        }
+        const candidateId = candidate._id as mongoose.Types.ObjectId;
+    
+        const applications = await jobApplicationRepository.findApplicationsByCandidate(candidateId);
+    
+        const statistics = {
+          jobsApplied: applications.length,
+          reviewed: applications.filter(app => app.application_reviewed).length,
+          resumeViewed: applications.filter(app => app.resume_viewed).length,
+          accepted: applications.filter(app => app.result === 'Accepted').length,
+          rejected: applications.filter(app => app.result === 'Rejected').length
+        };
+    
+        return statistics;
+      }
+    
+      async updateApplicationStatus(applicationId: string, updateData: any) {
+        return await jobApplicationRepository.updateApplicationStatus(applicationId, updateData);
+    }
     
 
 }

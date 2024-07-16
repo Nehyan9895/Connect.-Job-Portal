@@ -56,7 +56,6 @@ class JobApplicationController {
             }
 
             const applications = await jobApplicationService.getApplicationsForJob(new mongoose.Types.ObjectId(jobId));
-            console.log(applications);
             
             res.status(200).json(createSuccessResponse(applications));
         } catch (err) {
@@ -67,6 +66,70 @@ class JobApplicationController {
             }
         }
     }
+
+    async getJobApplicationStatistics(req: Request, res: Response) {
+        try {
+          const userId = req.params.id;
+    
+          if (!userId) {
+            return res.status(400).json(createErrorResponse('User ID required'));
+          }
+    
+          const statistics = await jobApplicationService.getJobApplicationStatistics(userId);
+          res.status(200).json(createSuccessResponse(statistics));
+        } catch (err) {
+          if (err instanceof Error) {
+            res.status(400).json(createErrorResponse(err.message));
+          } else {
+            res.status(400).json(createErrorResponse('An unknown error occurred'));
+          }
+        }
+      }
+
+      async reviewApplication(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const application = await jobApplicationService.updateApplicationStatus(id, { application_reviewed: true });
+            res.status(200).json(createSuccessResponse(application));
+        } catch (err) {
+            if (err instanceof Error) {
+              res.status(400).json(createErrorResponse(err.message));
+            } else {
+              res.status(400).json(createErrorResponse('An unknown error occurred'));
+            }
+          }
+    }
+    
+    async viewResume(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const application = await jobApplicationService.updateApplicationStatus(id, { resume_viewed: true });
+            res.status(200).json(createSuccessResponse(application));
+        } catch (err) {
+            if (err instanceof Error) {
+              res.status(400).json(createErrorResponse(err.message));
+            } else {
+              res.status(400).json(createErrorResponse('An unknown error occurred'));
+            }
+          }
+    }
+    
+    async updateApplicationStatus(req:Request,res:Response){
+        try {
+            const { status } = req.body; // status should be 'Accepted', 'Rejected', or 'Accepted for Interview'
+            const applicationId = req.params.id;
+
+            const application = await jobApplicationService.updateApplicationStatus(applicationId,{result:status})
+            res.status(200).json(createSuccessResponse(application));
+        } catch (err) {
+            if (err instanceof Error) {
+              res.status(400).json(createErrorResponse(err.message));
+            } else {
+              res.status(400).json(createErrorResponse('An unknown error occurred'));
+            }
+          }
+    }
+    
 }
 
 export const jobApplicationController = new JobApplicationController();

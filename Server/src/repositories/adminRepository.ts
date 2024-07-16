@@ -1,6 +1,6 @@
 import { User } from "../models/userModel";
 import { Candidate,ICandidate } from "../models/candidateModel";
-import { Recruiter } from "../models/recruiterModel";
+import { IRecruiter, Recruiter } from "../models/recruiterModel";
 
 class AdminRepository{
     async findAdminByEmail(email:string){
@@ -65,6 +65,17 @@ class AdminRepository{
             throw new Error('User not found');
         }
     
+        return await User.findByIdAndUpdate(user_id, { is_verified: is_verified }, { new: true });
+    }
+
+    async updateRecruiterVerificationStatus(userId:string,is_verified:boolean){
+        const recruiterData:(IRecruiter&Document) | null = await Recruiter.findById(userId);
+        const user_id = recruiterData?.user_id
+
+        if (!user_id) {
+            throw new Error('Recruiter not found');
+        }
+
         return await User.findByIdAndUpdate(user_id, { is_verified: is_verified }, { new: true });
     }
     

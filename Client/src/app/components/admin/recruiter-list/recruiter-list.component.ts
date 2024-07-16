@@ -5,18 +5,21 @@ import { CommonModule } from '@angular/common';
 import { MatPaginator } from '@angular/material/paginator';
 import { AdminBackendService } from '../../../services/admin/admin.service';
 import { ToastrService } from 'ngx-toastr';
+import { FooterComponent } from "../../candidate/shared/footer/footer.component";
 
 @Component({
     selector: 'app-recruiter-list',
     standalone: true,
     templateUrl: './recruiter-list.component.html',
     styleUrl: './recruiter-list.component.scss',
-    imports: [AdminHeaderComponent, AdminSideBarComponent,CommonModule,MatPaginator]
+    imports: [AdminHeaderComponent, AdminSideBarComponent, CommonModule, MatPaginator, FooterComponent]
 })
 export class RecruiterListComponent implements OnInit{
     recruiters: any[] = [];
     displayedUsers: any[] = [];
     isLoading: boolean = true;
+    isModalVisible = false;
+    selectedUser: any; 
 
     length = 0;
     pageSize = 5;
@@ -34,7 +37,7 @@ export class RecruiterListComponent implements OnInit{
     loadUsers(): void {
         this.adminBackend.getRecruiters().subscribe(
           data => {
-            this.recruiters = data;
+            this.recruiters = data.data;
             this.length = this.recruiters.length;
             this.updateDisplayedUsers();
             this.isLoading = false;
@@ -60,27 +63,51 @@ export class RecruiterListComponent implements OnInit{
 
 
       toggleVerificationStatus(user: any): void {
+        console.log(user);
+        
         if (!user) {
           console.error('User data is not available');
           return;
         }
     
         const newStatus = !user.is_verified;
-        this.adminBackend.updateUserVerificationStatus(user._id, newStatus).subscribe(
-          updatedUser => {
+        this.adminBackend.updateRecruiterVerificationStatus(user._id, newStatus).subscribe({
+          next:(updatedUser) => {
             if (updatedUser) {
-              user.is_verified = updatedUser.is_verified;
-              const status = updatedUser.is_verified ? 'unblocked' : 'blocked';
-              this.toastr.success(`User is now ${status}`, 'Success');
+              console.log(updatedUser);
+              user.is_verified = updatedUser.data.is_verified;
+    
+              const status = updatedUser.data.is_verified ? 'Unblocked' : 'Blocked';
+    
+              if (updatedUser.data.is_verified) {
+                this.toastr.success(`User is now ${status}`, 'Success');
+              } else {
+                this.toastr.warning(`User is now ${status}`, 'Warning');
+              }
+    
             } else {
               console.error('Failed to update user status');
               this.toastr.error('Failed to update user status', 'Error');
             }
           },
-          error => {
+          error:(error) => {
             console.error('Error updating user status:', error);
             this.toastr.error('Error updating user status', 'Error');
           }
-        );
+      });
+      }
+
+      showModal(recruiter: any): void {
+        this.selectedUser = recruiter;
+        this.isModalVisible = true;
+      }
+    
+      hideModal(): void {
+        this.isModalVisible = false;
+      }
+    
+      confirmAction(): void {
+        this.toggleVerificationStatus(this.selectedUser)
+        this.hideModal();
       }
 }

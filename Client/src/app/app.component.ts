@@ -9,13 +9,16 @@ import { AppliedJobsComponent } from "./components/candidate/applied-jobs/applie
 import { ApplicationsComponent } from "./components/recruiter/applications/applications.component";
 import { MessagesComponent } from "./components/recruiter/messages/messages.component";
 import { JobApplicantsComponent } from './components/recruiter/job-applicants/job-applicants.component';
+import { UserApplicationListComponent } from "./components/admin/user-application-list/user-application-list.component";
+import { ProfilePageComponent } from "./components/candidate/profile-page/profile-page.component";
+import { ChatComponent} from "./components/candidate/chat/chat.component";
 
 @Component({
     selector: 'app-root',
     standalone: true,
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss',
-    imports: [RouterOutlet, RecruiterHomeComponent, RecruiterProfileComponent, CreateJobComponent, HomeComponent, ApplyJobComponent, AppliedJobsComponent, ApplicationsComponent, MessagesComponent, JobApplicantsComponent]
+    imports: [RouterOutlet, RecruiterHomeComponent, RecruiterProfileComponent, CreateJobComponent, HomeComponent, ApplyJobComponent, AppliedJobsComponent, ApplicationsComponent, MessagesComponent, JobApplicantsComponent, UserApplicationListComponent, ProfilePageComponent, ChatComponent]
 })
 export class AppComponent {
   title = 'Client';

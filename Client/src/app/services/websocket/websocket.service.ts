@@ -1,38 +1,78 @@
 import { Injectable } from '@angular/core';
-import io from 'socket.io-client';
-import { environment } from '../../../environments/environment.development';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { Socket } from 'ngx-socket-io'
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ChatI } from '../../models/chat.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebsocketService {
-  private socket;
+  private onlineUsersSubject = new BehaviorSubject<string[]>([]);
+  private heartbeatInterval: any;
 
-  constructor(private http: HttpClient) {
-    this.socket = io(environment.ws_url);
+  constructor(private socket: Socket) {
+    this.setupSocketListeners();
   }
 
-  joinRoom(chatRoomId: string): void {
-    this.socket.emit('joinRoom', chatRoomId);
+  private setupSocketListeners() {
+    this.socket.on('online-users', (users: string[]) => {
+      this.onlineUsersSubject.next(users);
+    });
   }
 
-  sendMessage(message: any): void {
-    this.socket.emit('sendMessage', message);
+  connectUser(userId: string) {
+    this.socket.emit('user-connect', userId);
+    this.startHeartbeat(userId);
   }
 
-  onNewMessage(): Observable<any> {
-    return new Observable((observer) => {
-      this.socket.on('newMessage', (message: any) => {
-        observer.next(message);
+  disconnectUser() {
+    this.socket.disconnect();
+    this.stopHeartbeat();
+  }
+
+  getOnlineUsers(): Observable<string[]> {
+    return this.onlineUsersSubject.asObservable();
+  }
+
+  isUserOnline(userId: string): Observable<boolean> {
+    return new Observable<boolean>(observer => {
+      this.getOnlineUsers().subscribe(users => {
+        observer.next(users.includes(userId));
       });
     });
   }
 
-  getChatRoomsByRecruiter(recruiterId: string): Observable<any> {
-    return this.http.get(`${environment.recruiterApiKey}/recruiter/chat-rooms/${recruiterId}`);
+  private startHeartbeat(userId: string) {
+    this.heartbeatInterval = setInterval(() => {
+      this.socket.emit('heartbeat', userId);
+    }, 30000);
+  }
+
+  private stopHeartbeat() {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+    }
+  }
+
+
+
+
+
+
+
+  joinDirectChat(userId: string, friendId: string) {
+    this.socket.emit('joinChat', { senderId: userId, receiverId: friendId });
+  }
+
+  sendDirectMessage(senderId: string, receiverId: string, message: string) {
+    this.socket.emit('sendMessage', { senderId, receiverId, message });
+  }
+
+  getLastMessage(): Observable<ChatI> {
+    return this.socket.fromEvent<ChatI>('message');
+  }
+
+  getAllMessages(): Observable<ChatI[]> {
+    return this.socket.fromEvent<ChatI[]>('allMessages');
   }
 }
-
-
