@@ -6,6 +6,7 @@ export interface IRecruiter extends Document{
     phone: string;
     image: string;
     companyName:string;
+    companyLocations:[string];
 }
 
 const recruiterSchema = new Schema({

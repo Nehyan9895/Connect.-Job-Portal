@@ -46,6 +46,7 @@ export class EditJobComponent implements OnInit {
   allSkills = allSkills
   currentSkill = new FormControl('');
   filteredSkills: string[] = this.allSkills;
+  companyLocations: string[] = [];
 
   constructor(
     private recruiterService: RecruiterService,
@@ -137,8 +138,23 @@ export class EditJobComponent implements OnInit {
         });
       });
     }
+
+    this.fetchCompanyLocations();
   }
 
+
+  fetchCompanyLocations(): void {
+    const userId = localStorage.getItem('recruiter_id') as string
+    this.recruiterService.getCompanyLocations(userId).subscribe({
+      next: (response) => {
+        this.companyLocations = response.data; // Update this line based on your response structure
+      },
+      error: (error) => {
+        this.toastr.error('Failed to load company locations', 'Error');
+        console.error(error);
+      }
+    });
+  }
     updateJob() {
       if (this.jobForm.invalid) {
         this.jobForm.markAllAsTouched();

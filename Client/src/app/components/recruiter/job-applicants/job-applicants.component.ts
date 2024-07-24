@@ -7,6 +7,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { RecruiterService } from '../../../services/recruiter/recruiter.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { Router, RouterLink } from '@angular/router';
+import { ScheduleInterviewModalComponent } from '../schedule-interview-modal/schedule-interview-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-job-applicants',
@@ -24,7 +26,7 @@ export class JobApplicantsComponent implements OnInit {
   pageSizeOptions = [2, 3, 4];
   recruiterId:string | null | undefined;
 
-  constructor(private recruiterService: RecruiterService, private toastr: ToastrService, private router: Router) { }
+  constructor(private recruiterService: RecruiterService, private toastr: ToastrService, private router: Router,private dialog:MatDialog) { }
 
   ngOnInit(): void {
     const jobId = localStorage.getItem('jobId');
@@ -66,23 +68,47 @@ viewResume(candidate: any): void {
     );
 }
 
-acceptApplication(candidate: any,result:string): void {
-    candidate.result = result
-    this.recruiterService.updateApplicationStatus(candidate._id, result).subscribe(
+acceptApplication(candidate: any, result: string): void {
+  console.log(candidate);
+
+  // Update application status
+  this.recruiterService.updateApplicationStatus(candidate._id, result).subscribe(
+    (response) => {
+      if (result === 'Accepted for Interview') {
+        this.toastr.success('Application accepted for interview successfully.', 'Success');
+        this.openScheduleInterviewModal(candidate);
+      } else if (result === 'Rejected') {
+        candidate.result = 'Rejected'; // Update result immediately for rejection
+        this.toastr.success('Application rejected successfully.', 'Success');
+      }
+    },
+    (error) => {
+      console.error('Error accepting application for interview:', error);
+      this.toastr.error('Failed to accept application for interview.');
+    }
+  );
+}
+
+openScheduleInterviewModal(candidate: any): void {
+  const dialogRef = this.dialog.open(ScheduleInterviewModalComponent, {
+    width: '400px',
+    data: { candidate }
+  });
+
+  dialogRef.componentInstance.scheduleInterview.subscribe((interviewDetails: any) => {
+    this.recruiterService.scheduleInterview(interviewDetails).subscribe(
       (response) => {
-        if(candidate.result==='Accepted for Interview'){
-        this.toastr.success('Application accepted for interview successfully.','Success');
-        }else if(candidate.result==='Rejected'){
-          this.toastr.success('Application rejected successfully.','Success');
-        }
+        this.toastr.success('Interview scheduled successfully.', 'Success');
+        candidate.result = 'Accepted for Interview'; // Update result after successful scheduling
       },
       (error) => {
-        console.error('Error accepting application for interview:', error);
-        this.toastr.error('Failed to accept application for interview.');
-        candidate.result = 'Result'; // Revert locally if there's an error
+        console.error('Error scheduling interview:', error);
+        this.toastr.error('Failed to schedule interview.');
       }
     );
-  }
+  });
+}
+
   
 
 

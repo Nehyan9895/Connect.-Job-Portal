@@ -38,7 +38,8 @@ throw new Error('Method not implemented.');
       const recruiter_id: string = localStorage.getItem('recruiter_id') as string;
       this.recruiterService.getJobs(recruiter_id).subscribe((data) => {
         this.jobs = data.data;
-    
+        console.log(data.data);
+        
         // Sort jobs by the created_at field in descending order
         this.jobs.sort((a: any, b: any) => {
           const dateA = new Date(a.createdAt);

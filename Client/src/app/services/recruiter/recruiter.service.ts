@@ -40,8 +40,8 @@ export class RecruiterService {
     return false;  // default to not logged in if not in browser context
   }
 
-  login(data: object): Observable<any> {
-    return this.http.post(`${this.apiKey}/login`, data)
+  login(data: object){
+    return this.http.post<any>(`${this.apiKey}/login`, data)
   }
 
 
@@ -54,8 +54,8 @@ export class RecruiterService {
   }
 
   getProfile(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiKey}/recruiter/profile/${id}`);
-}
+    return this.http.get<any>(`${this.apiKey}/profile/${id}`);
+  }
 
 
   createJob(email: string, jobData: object): Observable<any> {
@@ -90,6 +90,26 @@ export class RecruiterService {
   // recruiter.service.ts
 updateApplicationStatus(applicationId: string, status: string): Observable<any> {
   return this.http.put<any>(`${this.apiKey}/applicants/status/${applicationId}`, { status });
+}
+
+scheduleInterview(interviewDetails:any):Observable<any>{
+  return this.http.post<any>(`${this.apiKey}/interviews/schedule`,interviewDetails)
+}
+
+getInterviews(): Observable<any> {
+  return this.http.get<any>(`${this.apiKey}/interviews`);
+}
+
+getCompanyLocations(userId: string): Observable<any> {
+  return this.http.get<any>(`${this.apiKey}/company-locations/${userId}`);
+}
+
+updateCompanyLocations(userId: string, companyLocations: string[]): Observable<any> {
+  return this.http.put<any>(`${this.apiKey}/profile/company-location/${userId}`, companyLocations);
+}
+
+updateRecruiterProfile(id: string, profileData: any): Observable<any> {
+  return this.http.put(`${this.apiKey}/profile/${id}`, profileData);
 }
 
 

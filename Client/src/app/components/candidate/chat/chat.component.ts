@@ -12,6 +12,7 @@ import { WebsocketService } from '../../../services/websocket/websocket.service'
 import { FormsModule } from '@angular/forms';
 import { userService } from '../../../services/users/user.service';
 import { privateDecrypt } from 'crypto';
+import { Sender } from '../../../models/candidate.model';
 
 @Component({
   selector: 'app-chat',
@@ -27,7 +28,7 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
   userImage!: string;
   username!: string;  
 
-  senders:any
+  senders: Sender[] = [];
                                    
   recruiterId: string | null = null;
   candidateId: string | null = null;
@@ -138,7 +139,7 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  isCurrentUser(senderId: any): boolean {
+  isCurrentUser(senderId: string): boolean {
     return senderId === this.candidateId;
   }
 

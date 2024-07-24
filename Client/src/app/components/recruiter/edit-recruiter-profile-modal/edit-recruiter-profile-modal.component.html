@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Edit Profile</h2>
+<form [formGroup]="profileForm" (ngSubmit)="onSave()">
+  <div mat-dialog-content class="custom-dialog-content">
+    <mat-form-field class="w-full mb-6">
+      <mat-label>Full Name</mat-label>
+      <input matInput formControlName="fullName" id="fullName" type="text">
+    </mat-form-field>
+
+    <mat-form-field class="w-full mb-6">
+      <mat-label>Company Name</mat-label>
+      <input matInput formControlName="companyName" id="companyName" type="text">
+    </mat-form-field>
+
+    <mat-form-field class="w-full mb-6">
+      <mat-label>Phone</mat-label>
+      <input matInput formControlName="phone" id="phone" type="text">
+    </mat-form-field>
+
+    
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button type="button" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid">Save</button>
+  </div>
+</form>

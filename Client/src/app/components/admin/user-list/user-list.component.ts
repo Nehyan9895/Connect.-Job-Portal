@@ -2,10 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { AdminHeaderComponent } from "../shared/admin-header/admin-header.component";
 import { AdminSideBarComponent } from "../shared/admin-side-bar/admin-side-bar.component";
 import { AdminBackendService } from '../../../services/admin/admin.service';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
+import { ICandidate } from '../../../models/candidate.model';
 
 @Component({
     selector: 'app-user-list',
@@ -15,11 +16,11 @@ import { FooterComponent } from "../../candidate/shared/footer/footer.component"
     imports: [AdminHeaderComponent, AdminSideBarComponent, CommonModule, MatPaginator, FooterComponent]
 })
 export class UserListComponent implements OnInit {
-  users: any[] = [];
-  displayedUsers: any[] = [];
+  users: ICandidate[] = [];
+  displayedUsers: ICandidate[] = [];
   isLoading: boolean = true;
   isModalVisible = false;
-  selectedUser: any; 
+  selectedUser: ICandidate|undefined; 
 
   length = 0;
   pageSize = 5;
@@ -38,6 +39,8 @@ export class UserListComponent implements OnInit {
     this.adminBackend.getUsers().subscribe(
       data => {
         this.users = data.data;
+        console.log(data.data);
+        
         this.length = this.users.length;
         this.updateDisplayedUsers();
         this.isLoading = false;
@@ -55,13 +58,13 @@ export class UserListComponent implements OnInit {
     this.displayedUsers = this.users.slice(start, end);
   }
 
-  handlePageEvent(event: any): void {
+  handlePageEvent(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.updateDisplayedUsers();
   }
 
-  toggleVerificationStatus(user: any): void {
+  toggleVerificationStatus(user: ICandidate): void {
     if (!user) {
       console.error('User data is not available');
       return;
@@ -96,9 +99,11 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  showModal(user: any): void {
+  showModal(user: ICandidate): void {
+    if(this.selectedUser){
     this.selectedUser = user;
     this.isModalVisible = true;
+    }
   }
 
   hideModal(): void {
@@ -106,8 +111,10 @@ export class UserListComponent implements OnInit {
   }
 
   confirmAction(): void {
+    if(this.selectedUser){
     this.toggleVerificationStatus(this.selectedUser)
     this.hideModal();
+    }
   }
 
   

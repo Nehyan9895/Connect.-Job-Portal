@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { JobTypePipe } from "../../../pipes/job-type.pipe";
+import { JobPosting } from '../../../models/job.model';
 
 @Component({
     selector: 'app-applications',
@@ -16,7 +17,7 @@ import { JobTypePipe } from "../../../pipes/job-type.pipe";
     imports: [FooterComponent, RecruiterHeaderComponent, RecruiterSidebarComponent, CommonModule, JobTypePipe]
 })
 export class ApplicationsComponent {
-  jobs: any;
+  jobs: JobPosting[] = [];
 
 
     isModalOpen = false;
@@ -29,7 +30,6 @@ export class ApplicationsComponent {
     this.isModalOpen = false;
   }
 
-  applications: any[] = []; // Define applications array to store fetched data
 
   constructor(private recruiterService: RecruiterService, private toastr:ToastrService, private router:Router) { }
 

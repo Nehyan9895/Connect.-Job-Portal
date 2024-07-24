@@ -81,3 +81,41 @@ export interface JobForApply {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface JobPosting {
+  createdAt: string;
+  description: string;
+  experience_required: string;
+  job_id: string;
+  job_location: string;
+  job_mode: string;
+  job_title: string;
+  job_type: string;
+  last_date: string;
+  preference: string;
+  recruiter_id: Recruiter;
+  responsibilities: string;
+  salary_range_max: number;
+  salary_range_min: number;
+  skills_required: string[];
+  updatedAt: string;
+  __v: number;
+  _id: string;
+}
+
+export interface Recruiter {
+  companyLocations: string[];
+  companyName: string;
+  fullName: string;
+  image: string;
+  phone: number;
+  user_id: string;
+  __v: number;
+  _id: string;
+}
+
+export interface HomeJob{
+  applied:boolean;
+  job:JobPosting;
+  matchScore: number;
+}

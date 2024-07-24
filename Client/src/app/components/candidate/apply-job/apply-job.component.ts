@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from "../shared/header/header.component";
 import { FooterComponent } from "../shared/footer/footer.component";
-import { Job } from '../../../models/job.model';
+import { Job, JobPosting } from '../../../models/job.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RecruiterService } from '../../../services/recruiter/recruiter.service';
 import { CommonModule } from '@angular/common';
@@ -18,7 +18,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 
 export class ApplyJobComponent implements OnInit {
-    job!: any; // Adjust the type as per your Job interface
+    job!: JobPosting; // Adjust the type as per your Job interface
     userId: string = localStorage.getItem('user_id') as string
   
     constructor(

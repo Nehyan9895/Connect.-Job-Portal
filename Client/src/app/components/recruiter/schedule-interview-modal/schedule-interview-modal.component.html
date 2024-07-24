@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>Schedule Interview</h2>
+<form [formGroup]="scheduleForm" (ngSubmit)="submit()">
+  <div mat-dialog-content class="custom-dialog-content">
+    <div class="mb-6">
+      <label for="date" class="block mb-2 text-gray-700">Date</label>
+      <input matInput formControlName="date" id="date" type="date"
+             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+    </div>
+
+    <div class="mb-6">
+      <label for="time" class="block mb-2 text-gray-700">Time</label>
+      <input matInput formControlName="time" id="time" type="time"
+             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-purple-700">
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button class="mt-6 bg-black text-white px-4 py-2 m-2 rounded" type="submit" [disabled]="scheduleForm.invalid">Schedule</button>
+  </div>
+</form>

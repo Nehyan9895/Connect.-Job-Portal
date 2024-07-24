@@ -3,9 +3,9 @@ import { userService } from '../../../services/users/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { HeaderComponent } from "../shared/header/header.component";
 import { FooterComponent } from "../shared/footer/footer.component";
-import { Job } from '../../../models/job.model';
+import { HomeJob, Job } from '../../../models/job.model';
 import { CommonModule } from '@angular/common';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { TagModule } from 'primeng/tag';
 import { JobTypePipe } from '../../../pipes/job-type.pipe';
@@ -18,8 +18,8 @@ import { JobTypePipe } from '../../../pipes/job-type.pipe';
     imports: [HeaderComponent, FooterComponent,CommonModule,MatPaginator,TagModule,JobTypePipe]
 })
 export class HomeComponent implements OnInit {
-  jobs: any[] = [];
-  displayedJobs: any[] = [];
+  jobs: HomeJob[] = [];
+  displayedJobs: HomeJob[] = [];
   length = 0;
   pageSize = 3;
   pageIndex = 0;
@@ -32,7 +32,7 @@ export class HomeComponent implements OnInit {
     const candidateId = localStorage.getItem('user_id'); 
     if (candidateId) {
       this.userService.getJobsForCandidate(candidateId).subscribe((data) => {
-        console.log(data);
+        console.log(data.data);
         this.jobs = data.data;
         this.length = this.jobs.length;
         this.updateDisplayedJobs();
@@ -62,7 +62,7 @@ export class HomeComponent implements OnInit {
     this.displayedJobs = this.jobs.slice(start, end);
   }
 
-  handlePageEvent(event: any): void {
+  handlePageEvent(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.updateDisplayedJobs();

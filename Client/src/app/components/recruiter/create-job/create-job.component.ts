@@ -46,6 +46,8 @@ export class CreateJobComponent implements OnInit {
   allSkills = allSkills
   currentSkill = new FormControl('');
   filteredSkills: string[] = this.allSkills;
+  companyLocations: string[] = [];
+
 
   constructor(
     private fb: FormBuilder,
@@ -72,7 +74,24 @@ export class CreateJobComponent implements OnInit {
     this.currentSkill.valueChanges.subscribe(value => this.filterSkills(value ?? ''));
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.fetchCompanyLocations();
+  }
+
+
+  fetchCompanyLocations(): void {
+    const userId = localStorage.getItem('recruiter_id') as string
+    this.recruiterService.getCompanyLocations(userId).subscribe({
+      next: (response) => {
+        this.companyLocations = response.data; // Update this line based on your response structure
+      },
+      error: (error) => {
+        this.toastr.error('Failed to load company locations', 'Error');
+        console.error(error);
+      }
+    });
+  }
+
 
   get skills(): FormArray {
     return this.jobForm.get('skills') as FormArray;

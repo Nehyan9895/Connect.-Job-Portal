@@ -14,6 +14,7 @@ import { userFalseAuth } from "../guard/user-false-auth.guard";
 import { AppliedJobsComponent } from "../components/candidate/applied-jobs/applied-jobs.component";
 import { ProfilePageComponent } from "../components/candidate/profile-page/profile-page.component";
 import { ChatComponent } from "../components/candidate/chat/chat.component";
+import { CandidateVideoCallComponent } from "../components/candidate/candidate-video-call/candidate-video-call.component";
 
 export const candidateRoute : Routes = [
     {
@@ -77,5 +78,9 @@ export const candidateRoute : Routes = [
         path:'candidate/messages',
         component:ChatComponent,
         canActivate:[userAuthGuard]
+    },
+    {
+        path:'candidate/video-call',
+        component:CandidateVideoCallComponent
     }
 ]

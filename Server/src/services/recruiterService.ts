@@ -29,6 +29,11 @@ class RecruiterService{
         return {token,recruiter:{email:recruiter.email,id:recruiter._id,username:recruiter.username,is_done:recruiter.is_done},message:'Recruiter login successful'}
     }
 
+    async getCompanyLocations(userId: string): Promise<string[] | null> {
+        return await recruiterRepository.getCompanyLocationsByUserId(userId);
+    }
+
+
     async createProfile(email: string, profileData: any, file?: Express.Multer.File): Promise<any>{
         const user = await userRepository.findUserByEmail(email);
     
@@ -81,6 +86,24 @@ class RecruiterService{
     async getCandidateById(userId:string){
         const candidate = await candidateRepository.findCandidateByUserId(userId)
         return candidate
+    }
+
+    async getAllInterviews() {
+        return recruiterRepository.getAllInterviews();
+      }
+
+      async getProfile(id:string){
+        return await recruiterRepository.findRecruiterByUserId(id)
+      }
+
+      async updateCompanyLocations(userId: string, companyLocations: any): Promise<any> {
+        const recruiter = await recruiterRepository.updateCompanyLocations(userId,companyLocations)
+        return recruiter;
+      }
+
+      async updateRecruiterProfile(userId:string,recruiterData:any){
+        const recruiter = await recruiterRepository.updateRecruiterProfile(userId,recruiterData)
+        return recruiter
     }
 }
 

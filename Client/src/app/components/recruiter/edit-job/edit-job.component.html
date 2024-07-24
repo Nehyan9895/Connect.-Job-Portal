@@ -20,7 +20,12 @@
           <div class="col-span-2 md:col-span-1">
             <mat-form-field class="w-full">
               <mat-label>Job Location</mat-label>
-              <input matInput formControlName="job_location" placeholder="Job Location">
+              <mat-select formControlName="job_location">
+                <mat-option value="">Select</mat-option>
+                <mat-option *ngFor="let location of companyLocations" [value]="location">
+                  {{ location }}
+                </mat-option>
+              </mat-select>
               <mat-error *ngIf="jobForm.get('job_location')?.invalid && jobForm.get('job_location')?.touched">
                 Invalid location.
               </mat-error>

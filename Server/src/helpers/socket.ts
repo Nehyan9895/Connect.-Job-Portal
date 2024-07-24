@@ -5,8 +5,10 @@ import { ChatRepository } from '../repositories/chatRepository';
 const chatRepository = new ChatRepository();
 const onlineUsers = new Map();
 
+let io:Server
+
 export const setupSocket = (server: HttpServer) => {
-    const io = new Server(server, {
+     io = new Server(server, {
         cors: {
             origin: 'http://localhost:4200',
             methods: ["GET", "POST"]
@@ -61,6 +63,17 @@ export const setupSocket = (server: HttpServer) => {
             }
             broadcastOnlineUsers();
         });
+
+        //for video call
+        socket.on('join-room', (roomId, userId) => {
+            socket.join(roomId);
+            socket.to(roomId).emit('user-connected', userId);
+    
+            socket.on('disconnect', () => {
+                socket.to(roomId).emit('user-disconnected', userId);
+            })
+        });
+        
     });
 
     function broadcastOnlineUsers() {
@@ -78,3 +91,4 @@ export const setupSocket = (server: HttpServer) => {
         broadcastOnlineUsers();
     }, 30000);
 }
+export { io };

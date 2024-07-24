@@ -2,10 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { AdminHeaderComponent } from "../shared/admin-header/admin-header.component";
 import { AdminSideBarComponent } from "../shared/admin-side-bar/admin-side-bar.component";
 import { CommonModule } from '@angular/common';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { AdminBackendService } from '../../../services/admin/admin.service';
 import { ToastrService } from 'ngx-toastr';
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
+import { IRecruiter } from '../../../models/recruiter.model';
 
 @Component({
     selector: 'app-recruiter-list',
@@ -15,11 +16,11 @@ import { FooterComponent } from "../../candidate/shared/footer/footer.component"
     imports: [AdminHeaderComponent, AdminSideBarComponent, CommonModule, MatPaginator, FooterComponent]
 })
 export class RecruiterListComponent implements OnInit{
-    recruiters: any[] = [];
-    displayedUsers: any[] = [];
+    recruiters: IRecruiter[] = [];
+    displayedUsers: IRecruiter[] = [];
     isLoading: boolean = true;
     isModalVisible = false;
-    selectedUser: any; 
+    selectedUser: IRecruiter|undefined; 
 
     length = 0;
     pageSize = 5;
@@ -37,6 +38,7 @@ export class RecruiterListComponent implements OnInit{
     loadUsers(): void {
         this.adminBackend.getRecruiters().subscribe(
           data => {
+            console.log(data.data);
             this.recruiters = data.data;
             this.length = this.recruiters.length;
             this.updateDisplayedUsers();
@@ -55,14 +57,14 @@ export class RecruiterListComponent implements OnInit{
         this.displayedUsers = this.recruiters.slice(start, end);
       }
     
-      handlePageEvent(event: any): void {
+      handlePageEvent(event: PageEvent): void {
         this.pageIndex = event.pageIndex;
         this.pageSize = event.pageSize;
         this.updateDisplayedUsers();
       }
 
 
-      toggleVerificationStatus(user: any): void {
+      toggleVerificationStatus(user: IRecruiter): void {
         console.log(user);
         
         if (!user) {
@@ -97,7 +99,7 @@ export class RecruiterListComponent implements OnInit{
       });
       }
 
-      showModal(recruiter: any): void {
+      showModal(recruiter: IRecruiter): void {
         this.selectedUser = recruiter;
         this.isModalVisible = true;
       }
@@ -107,7 +109,9 @@ export class RecruiterListComponent implements OnInit{
       }
     
       confirmAction(): void {
+        if(this.selectedUser){
         this.toggleVerificationStatus(this.selectedUser)
         this.hideModal();
+        }
       }
 }

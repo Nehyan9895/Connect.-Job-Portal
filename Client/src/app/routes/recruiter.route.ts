@@ -10,6 +10,8 @@ import { recruiterFalseAuthGuard } from "../guard/recruiter-false-auth.guard";
 import { JobApplicantsComponent } from "../components/recruiter/job-applicants/job-applicants.component";
 import { ApplicationsComponent } from "../components/recruiter/applications/applications.component";
 import { RecruiterProfilePageComponent } from "../components/recruiter/recruiter-profile-page/recruiter-profile-page.component";
+import { InterviewsComponent } from "../components/recruiter/interviews/interviews.component";
+import { VideoCallComponent } from "../components/recruiter/video-call/video-call.component";
 
 export const recruiterRoute : Routes = [
     {
@@ -61,5 +63,14 @@ export const recruiterRoute : Routes = [
         path:'recruiter/chat/:recruiterId/:candidateId',
         component:MessagesComponent,
         canActivate:[recruiterAuthGuard]
+    },
+    {
+        path:'recruiter/interviews',
+        component:InterviewsComponent,
+        canActivate:[recruiterAuthGuard]
+    },
+    {
+        path:'video-call',
+        component:VideoCallComponent,
     }
 ]
