@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, model, signal } from '@angular/core';
 import { FooterComponent } from '../shared/footer/footer.component';
-import { userService } from '../../../services/users/user.service';
+import { userService } from '../../../services/user.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -207,7 +207,7 @@ export class UserPersonalProfileComponent implements OnInit {
       console.log(formData);
       this.userBackend.profile(formData).subscribe({
         next: (response) => {
-          this.toastr.success(response.message, 'Success');
+          this.toastr.success(response.data.message, 'Success');
           this.router.navigate(['/candidate/home']);
         },
         error: (error) => {

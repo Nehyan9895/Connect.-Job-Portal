@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RecruiterHeaderComponent } from "../shared/recruiter-header/recruiter-header.component";
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
-import { RecruiterService } from '../../../services/recruiter/recruiter.service';
+import { RecruiterService } from '../../../services/recruiter.service';
 import { ToastrService } from 'ngx-toastr';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -68,25 +68,27 @@ export class RecruiterProfileComponent {
     }
 
 
-    onFileSelected(event: any) {
-        const file = event.target.files[0];
+    onFileSelected(event: Event): void {
+        const inputElement = event.target as HTMLInputElement;
+        const file = inputElement.files ? inputElement.files[0] : null;
         if (file) {
-          this.selectedFile = file;
-          this.selectedFileName = file.name;
+            this.selectedFile = file;
+            this.selectedFileName = file.name;
     
-          // Show image preview
-          const reader = new FileReader();
-          reader.onload = () => {
-            this.imagePreview = reader.result as string;
-          };
-          reader.readAsDataURL(file);
+            // Show image preview
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.imagePreview = reader.result as string;
+            };
+            reader.readAsDataURL(file);
     
-          this.profileForm.patchValue({
-            upload: file
-          });
-          this.profileForm.get('upload')!.updateValueAndValidity();
+            this.profileForm.patchValue({
+                upload: file
+            });
+            this.profileForm.get('upload')!.updateValueAndValidity();
         }
     }
+    
 
 
     addLocationFromInput(event?: MatChipInputEvent): void {
@@ -146,7 +148,7 @@ export class RecruiterProfileComponent {
 
         this.recruiterService.profile(formData).subscribe({
             next: (response) => {
-                this.toastr.success(response.message, 'Success');
+                this.toastr.success(response.data.message, 'Success');
                 this.router.navigate(['/recruiter/home']);
             },
             error: (error) => {

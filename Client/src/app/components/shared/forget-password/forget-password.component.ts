@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FooterComponent } from '../../candidate/shared/footer/footer.component';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { userService } from '../../../services/users/user.service';
+import { userService } from '../../../services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { response } from 'express';
@@ -37,8 +37,8 @@ export class ForgetPasswordComponent {
             this.userService.forgotPassword(this.email.value).subscribe({
                 next: (response) => {
                     console.log(response,'asdf');
-                    localStorage.setItem('otpToken',response.token)
-                    this.toastr.success(response.message, 'Success');
+                    localStorage.setItem('otpToken',response.data.token)
+                    this.toastr.success(response.data.message, 'Success');
                     this.otpSent = true;
                 },
                 error: (error) => {
@@ -55,7 +55,7 @@ export class ForgetPasswordComponent {
                 next:(response=>{
                     console.log(response);
                     
-                    this.toastr.success(response.message,'Success')
+                    this.toastr.success(response.data.message,'Success')
                     this.router.navigate(['candidate/reset-password'])
                     const email = localStorage.getItem('forgotEmail')
                     console.log(email,'emailslslslsl');

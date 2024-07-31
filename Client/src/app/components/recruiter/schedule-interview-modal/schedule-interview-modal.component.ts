@@ -4,6 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { JobApplicationDetails } from '../../../models/recruiterResponseModel';
+import { InterviewDetails } from '../../../models/interviewModel';
 
 @Component({
   selector: 'app-schedule-interview-modal',
@@ -19,12 +21,12 @@ import { MatSelectModule } from '@angular/material/select';
 })
 export class ScheduleInterviewModalComponent implements OnInit {
   scheduleForm: FormGroup;
-  @Output() scheduleInterview = new EventEmitter<any>();
+  @Output() scheduleInterview = new EventEmitter();
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ScheduleInterviewModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { candidate: any }
+    @Inject(MAT_DIALOG_DATA) public data: { candidate: JobApplicationDetails }
   ) {
     this.scheduleForm = this.fb.group({
       date: ['', Validators.required],
@@ -34,14 +36,13 @@ export class ScheduleInterviewModalComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data && this.data.candidate) {
-      // Initialize form or perform any setup based on the candidate data
       console.log(this.data.candidate); // For debugging
     }
   }
 
   submit() {
     if (this.scheduleForm.valid) {
-      const interviewDetails = {
+      const interviewDetails:InterviewDetails = {
         ...this.scheduleForm.value,
         candidateId: this.data.candidate.candidate_id._id,
         jobId: this.data.candidate.job_id,

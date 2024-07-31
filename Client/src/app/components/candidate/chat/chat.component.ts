@@ -7,10 +7,10 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription, filter } from 'rxjs';
 import { ChatI } from '../../../models/chat.model';
-import { RecruiterService } from '../../../services/recruiter/recruiter.service';
-import { WebsocketService } from '../../../services/websocket/websocket.service';
+import { RecruiterService } from '../../../services/recruiter.service';
+import { WebsocketService } from '../../../services/websocket.service';
 import { FormsModule } from '@angular/forms';
-import { userService } from '../../../services/users/user.service';
+import { userService } from '../../../services/user.service';
 import { privateDecrypt } from 'crypto';
 import { Sender } from '../../../models/candidate.model';
 
@@ -40,6 +40,8 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
   private messagesSubscription!: Subscription;
   private lastMessageSubscription!: Subscription;
   private routerSubscription!: Subscription;
+  notificationSubscription!: Subscription;
+
 
   constructor(
     private router: Router,
@@ -60,6 +62,9 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
     
    })
     }
+
+    
+
   }
 
   showMessages(id:string){
@@ -74,9 +79,7 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.initializeChat();
     });
 
-    if (this.candidateId) {
-      this.chatService.connectUser(this.candidateId);
-    }
+    
 
     // Fetch user data
     if(this.recruiterId){
@@ -117,9 +120,7 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.messagesSubscription?.unsubscribe();
     this.lastMessageSubscription?.unsubscribe();
     this.routerSubscription?.unsubscribe();
-    if (this.candidateId) {
-      this.chatService.disconnectUser();
-    }
+    
   }
 
   ngAfterViewChecked() {
@@ -132,12 +133,14 @@ export class ChatComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   sendMessage() {
     if (this.recruiterId && this.candidateId && this.message.trim()) {
-      this.chatService.sendDirectMessage(this.candidateId, this.recruiterId, this.message);
+      this.chatService.sendDirectMessage(this.candidateId, this.recruiterId, this.message,this.username);
       this.message = '';
     } else {
       this.toaster.error('Something went wrong. Try logging in again.');
     }
   }
+
+  
 
   isCurrentUser(senderId: string): boolean {
     return senderId === this.candidateId;

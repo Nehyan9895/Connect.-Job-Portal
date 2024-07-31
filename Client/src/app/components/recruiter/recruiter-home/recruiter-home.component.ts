@@ -2,14 +2,15 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
 import { RecruiterHeaderComponent } from "../shared/recruiter-header/recruiter-header.component";
 import { RecruiterSidebarComponent } from "../shared/recruiter-sidebar/recruiter-sidebar.component";
-import { RecruiterService } from '../../../services/recruiter/recruiter.service';
+import { RecruiterService } from '../../../services/recruiter.service';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
-import { Job } from '../../../models/job.model';
-import { MatPaginator } from '@angular/material/paginator';
+import { Job, RecruiterJob } from '../../../models/job.model';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { ApplicationsComponent } from "../applications/applications.component";
 import { JobTypePipe } from '../../../pipes/job-type.pipe';
+import { WebsocketService } from '../../../services/websocket.service';
 
 @Component({
     selector: 'app-recruiter-home',
@@ -23,8 +24,8 @@ export class RecruiterHomeComponent implements OnInit {
 block() {
 throw new Error('Method not implemented.');
 }
-    jobs: any[] = [];
-    displayedJobs: any[] = [];
+    jobs: RecruiterJob[] = [];
+    displayedJobs: RecruiterJob[] = [];
     length = 0;
     pageSize = 2;
     pageIndex = 0;
@@ -32,16 +33,17 @@ throw new Error('Method not implemented.');
 
     @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-    constructor(private recruiterService: RecruiterService, private toastr: ToastrService,private router:Router) {}
+    constructor(private recruiterService: RecruiterService, private toastr: ToastrService,private router:Router,private webSocketService:WebsocketService) {}
 
     ngOnInit(): void {
       const recruiter_id: string = localStorage.getItem('recruiter_id') as string;
+      this.webSocketService.connectUser(recruiter_id);
       this.recruiterService.getJobs(recruiter_id).subscribe((data) => {
         this.jobs = data.data;
         console.log(data.data);
         
         // Sort jobs by the created_at field in descending order
-        this.jobs.sort((a: any, b: any) => {
+        this.jobs.sort((a: RecruiterJob, b: RecruiterJob) => {
           const dateA = new Date(a.createdAt);
           const dateB = new Date(b.createdAt);
           return dateB.getTime() - dateA.getTime(); // Sort in descending order
@@ -64,7 +66,7 @@ throw new Error('Method not implemented.');
       this.displayedJobs = this.jobs.slice(start, end);
     }
 
-    handlePageEvent(event: any): void {
+    handlePageEvent(event: PageEvent): void {
       this.pageIndex = event.pageIndex;
       this.pageSize = event.pageSize;
       this.updateDisplayedJobs();

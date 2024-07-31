@@ -3,7 +3,7 @@ import { FooterComponent } from '../../candidate/shared/footer/footer.component'
 import { CommonModule } from '@angular/common';
 import { NgxOtpInputConfig, NgxOtpInputModule } from 'ngx-otp-input';
 import { FormsModule } from '@angular/forms';
-import { userService } from '../../../services/users/user.service';
+import { userService } from '../../../services/user.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 
@@ -24,7 +24,7 @@ export class OtpPageComponent {
   otp: string | undefined;
   resendDisabled: boolean = true;
   timeLeft: number = 60;
-  interval: any;
+  interval: NodeJS.Timeout|undefined;
 
   constructor(
     private userService: userService,
@@ -92,8 +92,8 @@ export class OtpPageComponent {
       this.userService.resendOtp(email).subscribe({
         next: (response) => {
           console.log(response);
-          this.toaster.success(response.message, 'Success');
-          localStorage.setItem('otpToken', response.newOtpToken);
+          this.toaster.success(response.data.message, 'Success');
+          localStorage.setItem('otpToken', response.data.newOtpToken);
           this.startTimer();
         },
         error: (error) => {

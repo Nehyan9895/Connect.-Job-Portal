@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AdminHeaderComponent } from "../shared/admin-header/admin-header.component";
 import { AdminSideBarComponent } from "../shared/admin-side-bar/admin-side-bar.component";
-import { AdminBackendService } from '../../../services/admin/admin.service';
+import { AdminBackendService } from '../../../services/admin.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
@@ -100,10 +100,8 @@ export class UserListComponent implements OnInit {
   }
 
   showModal(user: ICandidate): void {
-    if(this.selectedUser){
     this.selectedUser = user;
     this.isModalVisible = true;
-    }
   }
 
   hideModal(): void {

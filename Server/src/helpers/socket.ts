@@ -1,14 +1,15 @@
 import { Server } from 'socket.io';
 import { Server as HttpServer } from 'http';
 import { ChatRepository } from '../repositories/chatRepository';
+import { notificationRepository } from '../repositories/notificationRepository';
 
 const chatRepository = new ChatRepository();
 const onlineUsers = new Map();
 
-let io:Server
+let io: Server
 
 export const setupSocket = (server: HttpServer) => {
-     io = new Server(server, {
+    io = new Server(server, {
         cors: {
             origin: 'http://localhost:4200',
             methods: ["GET", "POST"]
@@ -32,20 +33,42 @@ export const setupSocket = (server: HttpServer) => {
             });
         });
 
-        socket.on('sendMessage', async ({ senderId, receiverId, message }) => {
+        socket.on('sendMessage', async ({ senderId, receiverId, message, username }) => {
             const room = [senderId, receiverId].sort().join('-');
 
             try {
+                // Save the message
                 const savedMessage = await chatRepository.sendMessage(senderId, receiverId, message);
                 const updatedMessage = await chatRepository.getMessageById(savedMessage._id as unknown as string);
 
-                const addToMessagedBy = await chatRepository.addMessagedBy(senderId,receiverId)
+                // Add to messagedBy
+                await chatRepository.addMessagedBy(senderId, receiverId);
 
+                // Create and save notification
+                const notificationMessage = `You have a new message from ${username}`;
+                const notification = await notificationRepository.createNotification(receiverId, notificationMessage);
+
+                // Emit the message and notification
                 io.to(room).emit('message', updatedMessage);
+                console.log(`Emitting notification to ${receiverId}`);
+                const receiverSocketId = onlineUsers.get(receiverId)?.socketId;
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit('notification', {
+                        type: 'message',
+                        message: notification.notification
+                    });
+                } else {
+                    console.log(`No active socket found for receiver ${receiverId}`);
+                }
+
+
+
+
             } catch (error) {
                 console.error('Error sending message:', error);
             }
         });
+
 
         socket.on('heartbeat', (userId) => {
             if (onlineUsers.has(userId)) {
@@ -64,16 +87,31 @@ export const setupSocket = (server: HttpServer) => {
             broadcastOnlineUsers();
         });
 
-        //for video call
-        socket.on('join-room', (roomId, userId) => {
-            socket.join(roomId);
-            socket.to(roomId).emit('user-connected', userId);
-    
-            socket.on('disconnect', () => {
-                socket.to(roomId).emit('user-disconnected', userId);
-            })
+        socket.on('startInterview', async ({  job,candidateId, roomID }) => {
+            const notificationLink = `localhost:4200/video-call?roomID=${roomID}`;
+        
+            try {
+                // Create and save notification
+                const notification = await notificationRepository.createNotification(candidateId, notificationLink);
+        
+                // Emit the notification
+                const receiverSocketId = onlineUsers.get(candidateId)?.socketId;
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit('notification', {
+                        type: 'video',
+                        message: `Join this meeting for ${job} position`,
+                        link: notificationLink // Send the link with the notification
+                    });
+                } else {
+                    console.log(`No active socket found for receiver ${candidateId}`);
+                }
+            } catch (error) {
+                console.error('Error sending notification:', error);
+            }
         });
         
+
+
     });
 
     function broadcastOnlineUsers() {

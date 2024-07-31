@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
 import { RecruiterHeaderComponent } from "../shared/recruiter-header/recruiter-header.component";
 import { RecruiterSidebarComponent } from "../shared/recruiter-sidebar/recruiter-sidebar.component";
-import { RecruiterService } from '../../../services/recruiter/recruiter.service';
+import { RecruiterService } from '../../../services/recruiter.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';

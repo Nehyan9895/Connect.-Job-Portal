@@ -188,7 +188,7 @@ class UserService {
             }
         }
         await userRepository.updateUserIsDone(userId)
-        return candidate;
+        return {message:'Profile Created successfully'};
     }
     
     
@@ -220,7 +220,8 @@ class UserService {
     
     async changePassword(email: string, newPassword: string) {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-        return await userRepository.updateUserPassword(email, hashedPassword);
+        await userRepository.updateUserPassword(email, hashedPassword);
+        return {message:'Password changed successfully'}
     }
 
     async updateCandidateEducation(userId: string, educationData: any){

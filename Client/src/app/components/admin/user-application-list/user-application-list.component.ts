@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import { AdminHeaderComponent } from "../shared/admin-header/admin-header.component";
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
 import { AdminSideBarComponent } from "../shared/admin-side-bar/admin-side-bar.component";
-import { userService } from '../../../services/users/user.service';
+import { userService } from '../../../services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { JobTypePipe } from "../../../pipes/job-type.pipe";
+import { JobForApplication } from '../../../models/job.model';
+import { Application } from '../../../models/applicationModel';
 
 @Component({
     selector: 'app-user-application-list',
@@ -15,8 +17,8 @@ import { JobTypePipe } from "../../../pipes/job-type.pipe";
     imports: [AdminHeaderComponent, FooterComponent, AdminSideBarComponent, CommonModule, JobTypePipe]
 })
 export class UserApplicationListComponent {
-    jobs: any[] = [];
-  selectedJob?: any;
+    jobs: JobForApplication[] = [];
+  selectedJob?: JobForApplication;
 
   applicationSteps = [
     { number: 1, name: 'Application Sent' },
@@ -28,7 +30,7 @@ export class UserApplicationListComponent {
   constructor(private userService: userService, private toastr: ToastrService) {}
 
   ngOnInit(): void {
-    const userId = localStorage.getItem('user_id');
+    const userId = localStorage.getItem('user_id') as string;
     this.userService.getJobApplications(userId).subscribe(
       (data) => {
         this.jobs = data.data.map((application: any) => ({
@@ -75,7 +77,7 @@ export class UserApplicationListComponent {
     return stepIndex <= currentStepIndex ? 'bg-green-500' : 'bg-gray-300';
   }
 
-  private getApplicationStatus(application: any): string {
+  private getApplicationStatus(application: Application): string {
     if (application.result === 'Accepted' || application.result === 'Rejected') return application.result;
     if (application.resume_viewed) return 'Resume Viewed';
     if (application.application_reviewed) return 'Application Reviewed';
@@ -83,7 +85,7 @@ export class UserApplicationListComponent {
     return 'Applied';
   }
 
-  private getApplicationStatusClass(application: any): string {
+  private getApplicationStatusClass(application: Application): string {
     if (application.result === 'Rejected') return 'text-red-500';
     if (application.result === 'Accepted') return 'text-green-500';
     if (application.resume_viewed) return 'text-yellow-500';

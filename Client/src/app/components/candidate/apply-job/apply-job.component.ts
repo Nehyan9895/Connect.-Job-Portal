@@ -3,9 +3,9 @@ import { HeaderComponent } from "../shared/header/header.component";
 import { FooterComponent } from "../shared/footer/footer.component";
 import { Job, JobPosting } from '../../../models/job.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RecruiterService } from '../../../services/recruiter/recruiter.service';
+import { RecruiterService } from '../../../services/recruiter.service';
 import { CommonModule } from '@angular/common';
-import { userService } from '../../../services/users/user.service';
+import { userService } from '../../../services/user.service';
 import { response } from 'express';
 import { ToastrService } from 'ngx-toastr';
 

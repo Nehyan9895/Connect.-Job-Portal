@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { HeaderComponent } from "../shared/header/header.component";
 import { FooterComponent } from "../shared/footer/footer.component";
-import { userService } from '../../../services/users/user.service';
+import { userService } from '../../../services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -18,6 +18,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { EditProfileModalComponent } from '../edit-profile-modal/edit-profile-modal.component';
 import { ChangeDetectorRef } from '@angular/core';
 import { BasicCandidateData, CandidateData, CandidateDetail, Education, EducationData, ExperienceData } from '../../../models/candidateData.interface';
+import { JobApplicationStatistics } from '../../../models/userResponseModel';
 
 
 @Component({
@@ -40,12 +41,11 @@ export class ProfilePageComponent implements OnInit {
   isModalVisible = false;
   showEditProfileModal = false;
   
-  statistics = {
+  statistics:JobApplicationStatistics = {
     jobsApplied: 0,
     reviewed: 0,
     resumeViewed: 0,
     accepted: 0,
-    interviewScheduled: 0,
     rejected: 0,
   };
 
@@ -70,8 +70,6 @@ export class ProfilePageComponent implements OnInit {
   getUserDetails(candidateId: string) {
     this.userService.getCandidateDetails(candidateId).subscribe((user) => {
       this.candidateData = user.data;
-      console.log(this.candidateData);
-      console.log(typeof this.candidateData);
       
     });
   }

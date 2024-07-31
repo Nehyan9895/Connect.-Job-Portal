@@ -12,7 +12,7 @@ export class JobTypePipe implements PipeTransform {
     contract_based: 'Contract Based'
   };
 
-  transform(value: string): string {
+  transform(value: string){
     return this.jobTypeMapping[value] || value;
   }
 

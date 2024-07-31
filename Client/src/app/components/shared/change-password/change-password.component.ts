@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { userService } from '../../../services/users/user.service';
+import { userService } from '../../../services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { response } from 'express';
 import { Router } from '@angular/router';
@@ -31,7 +31,7 @@ userForm: FormGroup;
             this.userService.resetPassword(email,this.userForm.get('password')?.value).subscribe({
                 next:(response=>{
                     console.log(response);
-                    this.toastr.success(response.message,'Success')
+                    this.toastr.success(response.data.message,'Success')
                     this.router.navigate(['candidate/login'])
                 }),
                 error: (error) => {

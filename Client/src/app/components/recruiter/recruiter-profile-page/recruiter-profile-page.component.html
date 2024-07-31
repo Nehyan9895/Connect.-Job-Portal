@@ -20,21 +20,21 @@
         <div class="space-y-6">
           <div>
             <p class="text-lg font-semibold text-gray-700">Full Name</p>
-            <p class="text-gray-600">{{ profile.fullName }}</p>
+            <p class="text-gray-600">{{ profile?.fullName }}</p>
           </div>
           <div>
             <p class="text-lg font-semibold text-gray-700">Company Name</p>
-            <p class="text-gray-600">{{ profile.companyName }}</p>
+            <p class="text-gray-600">{{ profile?.companyName }}</p>
           </div>
           <div>
             <p class="text-lg font-semibold text-gray-700">Phone Number</p>
-            <p class="text-gray-600">{{ profile.phone }}</p>
+            <p class="text-gray-600">{{ profile?.phone }}</p>
           </div>
           <div>
             <p class="text-lg font-semibold text-gray-700">Company Locations</p>
             <div class="flex flex-wrap gap-2">
               <mat-chip-listbox>
-                <mat-chip-option *ngFor="let location of profile.companyLocations" class="bg-gray-200">
+                <mat-chip-option *ngFor="let location of profile?.companyLocations" class="bg-gray-200">
                   {{ location }}
                   <mat-icon matChipRemove (click)="deleteLocation(location)">cancel</mat-icon>
                 </mat-chip-option>

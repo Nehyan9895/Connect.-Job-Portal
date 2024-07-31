@@ -11,7 +11,7 @@ import { recruiterRoute } from './routes/recruiter.route';
 import { sharedRoute } from './routes/shared.route';
 import { adminRoute } from './routes/admin.route';
 import { userAuthInterceptor } from './services/interceptor/user-auth.interceptor';
-import { recruiterAuthInterceptor } from './services/interceptor/recruiter-auth.interceptor';
+// import { recruiterAuthInterceptor } from './services/interceptor/recruiter-auth.interceptor';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 
 
@@ -25,7 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(sharedRoute),
     provideRouter(adminRoute),
     provideHttpClient(withInterceptors([userAuthInterceptor])),
-    provideHttpClient(withInterceptors([recruiterAuthInterceptor])),
+    // provideHttpClient(withInterceptors([recruiterAuthInterceptor])),
     provideClientHydration(),
     provideHttpClient(withFetch()), 
     provideToastr({

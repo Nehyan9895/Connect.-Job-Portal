@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FooterComponent } from '../../candidate/shared/footer/footer.component';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
-import { AdminBackendService } from '../../../services/admin/admin.service';
+import { AdminBackendService } from '../../../services/admin.service';
 
 @Component({
   selector: 'app-admin-login',

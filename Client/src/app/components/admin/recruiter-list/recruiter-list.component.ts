@@ -3,7 +3,7 @@ import { AdminHeaderComponent } from "../shared/admin-header/admin-header.compon
 import { AdminSideBarComponent } from "../shared/admin-side-bar/admin-side-bar.component";
 import { CommonModule } from '@angular/common';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { AdminBackendService } from '../../../services/admin/admin.service';
+import { AdminBackendService } from '../../../services/admin.service';
 import { ToastrService } from 'ngx-toastr';
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
 import { IRecruiter } from '../../../models/recruiter.model';

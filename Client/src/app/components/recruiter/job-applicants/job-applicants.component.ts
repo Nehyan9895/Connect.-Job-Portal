@@ -3,12 +3,14 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { RecruiterSidebarComponent } from "../shared/recruiter-sidebar/recruiter-sidebar.component";
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
 import { RecruiterHeaderComponent } from "../shared/recruiter-header/recruiter-header.component";
-import { MatPaginator } from '@angular/material/paginator';
-import { RecruiterService } from '../../../services/recruiter/recruiter.service';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { RecruiterService } from '../../../services/recruiter.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { Router, RouterLink } from '@angular/router';
 import { ScheduleInterviewModalComponent } from '../schedule-interview-modal/schedule-interview-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { JobApplicationDetails } from '../../../models/recruiterResponseModel';
+import { InterviewDetails } from '../../../models/interviewModel';
 
 @Component({
     selector: 'app-job-applicants',
@@ -18,8 +20,8 @@ import { MatDialog } from '@angular/material/dialog';
     imports: [CommonModule, RecruiterSidebarComponent, FooterComponent, RecruiterHeaderComponent,MatPaginator,ToastrModule,RouterLink,]
 })
 export class JobApplicantsComponent implements OnInit {
-  candidates: any[] = [];
-  displayedCandidates: any[] = [];
+  candidates: JobApplicationDetails[] = [];
+  displayedCandidates: JobApplicationDetails[] = [];
   length = 0;
   pageSize = 2;
   pageIndex = 0;
@@ -54,7 +56,7 @@ export class JobApplicantsComponent implements OnInit {
 }
 
 
-viewResume(candidate: any): void {
+viewResume(candidate: JobApplicationDetails): void {
     candidate.resume_viewed = true; // Update locally first
     this.recruiterService.updateResumeViewed(candidate._id).subscribe(
         (response) => {
@@ -68,7 +70,7 @@ viewResume(candidate: any): void {
     );
 }
 
-acceptApplication(candidate: any, result: string): void {
+acceptApplication(candidate: JobApplicationDetails, result: string): void {
   console.log(candidate);
 
   // Update application status
@@ -89,13 +91,13 @@ acceptApplication(candidate: any, result: string): void {
   );
 }
 
-openScheduleInterviewModal(candidate: any): void {
+openScheduleInterviewModal(candidate: JobApplicationDetails): void {
   const dialogRef = this.dialog.open(ScheduleInterviewModalComponent, {
     width: '400px',
     data: { candidate }
   });
 
-  dialogRef.componentInstance.scheduleInterview.subscribe((interviewDetails: any) => {
+  dialogRef.componentInstance.scheduleInterview.subscribe((interviewDetails: InterviewDetails) => {
     this.recruiterService.scheduleInterview(interviewDetails).subscribe(
       (response) => {
         this.toastr.success('Interview scheduled successfully.', 'Success');
@@ -125,65 +127,11 @@ updateDisplayedJobs(): void {
 }
 
 
-  handlePageEvent(event: any): void {
+  handlePageEvent(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.updateDisplayedJobs();
   }
 
-  // reviewApplication(candidate: any): void {
-  //   candidate.application_reviewed = true; // Update locally first
-  //   this.recruiterService.reviewApplication(candidate._id).subscribe(
-  //     (response) => {
-  //       this.toastr.success('Application reviewed successfully.');
-  //     },
-  //     (error) => {
-  //       console.error('Error reviewing application:', error);
-  //       this.toastr.error('Failed to review application.');
-  //       candidate.application_reviewed = false; // Revert locally if there's an error
-  //     }
-  //   );
-  // }
-
-  // viewResume(candidate: any): void {
-  //   candidate.resume_viewed = true; // Update locally first
-  //   this.recruiterService.viewResume(candidate._id).subscribe(
-  //     (response) => {
-  //       this.toastr.success('Resume viewed successfully.');
-  //     },
-  //     (error) => {
-  //       console.error('Error viewing resume:', error);
-  //       this.toastr.error('Failed to view resume.');
-  //       candidate.resume_viewed = false; // Revert locally if there's an error
-  //     }
-  //   );
-  // }
-
-  // acceptApplication(candidate: any): void {
-  //   candidate.result = 'Accepted'; // Update locally first
-  //   this.recruiterService.updateApplicationStatus(candidate._id, 'Accepted').subscribe(
-  //     (response) => {
-  //       this.toastr.success('Application accepted successfully.');
-  //     },
-  //     (error) => {
-  //       console.error('Error accepting application:', error);
-  //       this.toastr.error('Failed to accept application.');
-  //       candidate.result = 'Result'; // Revert locally if there's an error
-  //     }
-  //   );
-  // }
-
-  // rejectApplication(candidate: any): void {
-  //   candidate.result = 'Rejected'; // Update locally first
-  //   this.recruiterService.updateApplicationStatus(candidate._id, 'Rejected').subscribe(
-  //     (response) => {
-  //       this.toastr.success('Application rejected successfully.');
-  //     },
-  //     (error) => {
-  //       console.error('Error rejecting application:', error);
-  //       this.toastr.error('Failed to reject application.');
-  //       candidate.result = 'Result'; // Revert locally if there's an error
-  //     }
-  //   );
-  // }
+  
 }

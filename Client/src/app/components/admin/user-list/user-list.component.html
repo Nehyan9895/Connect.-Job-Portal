@@ -13,7 +13,6 @@
               <th class="p-4 text-left">Full Name</th>
               <th class="p-4 text-left">Email ID</th>
               <th class="p-4 text-left">Phone Number</th>
-              <th class="p-4 text-left">Applications</th>
               <th class="p-4 text-left">Status</th>
             </tr>
           </thead>
@@ -22,13 +21,6 @@
               <td class="p-4">{{ user.fullName }}</td>
               <td class="p-4">{{ user.email }}</td>
               <td class="p-4">{{ user.phone }}</td>
-              <td class="p-4">
-                <button 
-                (click)="showModal(user)"
-                  class="py-1 px-3 rounded bg-green-500 text-white">
-                  Applications
-                </button>
-              </td>
               <td class="p-4">
                 <button 
                 (click)="showModal(user)"

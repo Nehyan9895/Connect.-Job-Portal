@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
 import { RecruiterSidebarComponent } from "../shared/recruiter-sidebar/recruiter-sidebar.component";
 import { RecruiterHeaderComponent } from "../shared/recruiter-header/recruiter-header.component";
-import { RecruiterService } from '../../../services/recruiter/recruiter.service';
+import { RecruiterService } from '../../../services/recruiter.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { EditRecruiterProfileModalComponent } from '../edit-recruiter-profile-modal/edit-recruiter-profile-modal.component';
@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { popularLocationsInIndia } from '../../../constants/locations.constant';
 import { ToastrService } from 'ngx-toastr';
+import {  RecruiterProfileFull } from '../../../models/recruiterResponseModel';
 
 @Component({
   selector: 'app-recruiter-profile-page',
@@ -25,7 +26,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './recruiter-profile-page.component.scss',
 })
 export class RecruiterProfilePageComponent {
-  profile: any;
+  profile: RecruiterProfileFull|null  = null;
   newLocation: string = '';
   showLocationForm: boolean = false;
   filteredLocation:string[] = popularLocationsInIndia;
@@ -52,12 +53,14 @@ export class RecruiterProfilePageComponent {
       });
     }
   }
-  filterLocations(event: any): void {
-    const query = event.target.value.toLowerCase();
+  filterLocations(event: Event): void {
+    const inputElement = event.target as HTMLInputElement; // Cast to HTMLInputElement to access value
+    const query = inputElement.value.toLowerCase();
     this.filteredLocation = popularLocationsInIndia.filter(location =>
       location.toLowerCase().includes(query)
     );
   }
+  
 
 
   editProfile(): void {
@@ -66,20 +69,23 @@ export class RecruiterProfilePageComponent {
       width: '500px',
     });
 
-    dialogRef.afterClosed().subscribe((result: any) => {
+    dialogRef.afterClosed().subscribe((result: RecruiterProfileFull) => {
       if (result) {
         this.profile = { ...this.profile, ...result };
         // Optionally, save changes to the backend here
-        this.recruiterService.updateRecruiterProfile(this.profile._id, result).subscribe(
-          (updatedData) => {
-            console.log(updatedData);
-            this.cdr.detectChanges();
-             this.toastr.success('Profile updated successfully','Success');
-          },
-          (error) => {
-            this.toastr.error('Failed to update profile', 'Error');
-          } 
-        );
+        if(this.profile){
+          this.recruiterService.updateRecruiterProfile(this.profile._id, result).subscribe(
+            (updatedData) => {
+              console.log(updatedData);
+              this.cdr.detectChanges();
+               this.toastr.success('Profile updated successfully','Success');
+            },
+            (error) => {
+              this.toastr.error('Failed to update profile', 'Error');
+            } 
+          );
+        }
+        
       }
     });
   }

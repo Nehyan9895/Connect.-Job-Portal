@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FooterComponent } from '../../candidate/shared/footer/footer.component';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { userService } from '../../../services/users/user.service';
+import { userService } from '../../../services/user.service';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import {MatButtonModule} from '@angular/material/button';
 import { MatSlideToggleModule,_MatSlideToggleRequiredValidatorModule,} from '@angular/material/slide-toggle';

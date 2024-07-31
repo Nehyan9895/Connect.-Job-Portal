@@ -1,6 +1,5 @@
 import { Request,Response } from "express";
 import { jobService } from "../services/jobService";
-import { CustomRequest } from "../interfaces/customRequest";
 import { createErrorResponse,createSuccessResponse } from "../helpers/responseHelper";
 
   

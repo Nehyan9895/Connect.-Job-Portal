@@ -13,17 +13,13 @@
   
   <!-- Desktop menu links -->
   <div class="hidden md:flex flex-wrap items-center space-x-4 md:space-x-8">
-    <a href="#" class="flex flex-col items-center text-[#002855] hover:text-[#000]">
+    <a [routerLink]="['/recruiter/home']" href="#" class="flex flex-col items-center text-[#002855] hover:text-[#000]">
       <i class="fa-solid fa-briefcase mb-1"></i>
       <span class="text-xs md:text-sm">Job Posted</span>
     </a>
-    <a href="#" class="flex flex-col items-center text-[#002855] hover:text-[#000]">
+    <a [routerLink]="['/recruiter/applications']" href="#" class="flex flex-col items-center text-[#002855] hover:text-[#000]">
       <i class="fa-solid fa-calendar-check mb-1"></i>
       <span class="text-xs md:text-sm">Applications</span>
-    </a>
-    <a href="#" class="flex flex-col items-center text-[#002855] hover:text-[#000]">
-      <i class="fa-solid fa-envelope mb-1"></i>
-      <span class="text-xs md:text-sm">Messages</span>
     </a>
     <a href="#" [routerLink]="['/recruiter/profile']" class="flex flex-col items-center text-[#002855] hover:text-[#000]">
       <i class="fa-solid fa-user-circle mb-1"></i>
@@ -44,10 +40,7 @@
       <i class="fa-solid fa-calendar-check mb-1"></i>
       <span class="text-xs md:text-sm">Applications</span>
     </a>
-    <a href="#" class="flex flex-col items-center text-[#002855] hover:text-[#000]">
-      <i class="fa-solid fa-envelope mb-1"></i>
-      <span class="text-xs md:text-sm">Messages</span>
-    </a>
+   
     <a href="#" class="flex flex-col items-center text-[#002855] hover:text-[#000]">
       <i class="fa-solid fa-user-circle mb-1"></i>
       <span class="text-xs md:text-sm">Profile</span>

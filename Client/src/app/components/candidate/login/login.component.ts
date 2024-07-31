@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { FooterComponent } from '../shared/footer/footer.component';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { userService } from '../../../services/users/user.service';
+import { userService } from '../../../services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
+import { WebsocketService } from '../../../services/websocket.service';
 
 @Component({
   selector: 'app-login',
@@ -50,8 +51,10 @@ export class LoginComponent {
           this.image = user.image
           localStorage.setItem('user_id',user.id)
           this.toastr.success(response.data.message,'Success')
+
           if(user.is_done){
           this.router.navigate(['/candidate/home'])
+          
           }else{
             this.router.navigate(['/candidate/add-profile'])
           }

@@ -1,7 +1,7 @@
 import { AfterViewChecked, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FooterComponent } from "../../candidate/shared/footer/footer.component";
 import { RecruiterHeaderComponent } from "../shared/recruiter-header/recruiter-header.component";
-import { WebsocketService } from '../../../services/websocket/websocket.service';
+import { WebsocketService } from '../../../services/websocket.service';
 import { filter, Observable, Subscription } from 'rxjs';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -9,10 +9,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { ChatI } from '../../../models/chat.model';
 import { ToastrService } from 'ngx-toastr';
-import { userService } from '../../../services/users/user.service';
+import { userService } from '../../../services/user.service';
 import { ChatHeaderComponent } from "../shared/chat-header/chat-header.component";
 import { RecruiterSidebarComponent } from "../shared/recruiter-sidebar/recruiter-sidebar.component";
-import { RecruiterService } from '../../../services/recruiter/recruiter.service';
+import { RecruiterService } from '../../../services/recruiter.service';
 
 @Component({
     selector: 'app-messages',
@@ -40,6 +40,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked, OnDestroy {
   private messagesSubscription!: Subscription;
   private lastMessageSubscription!: Subscription;
   private routerSubscription!: Subscription;
+  notificationSubscription!: Subscription;
 
   constructor(
     private router: Router,
@@ -63,9 +64,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.initializeChat();
     });
 
-    if (this.recruiterId) {
-      this.chatService.connectUser(this.recruiterId);
-    }
+    
 
     // Fetch user data
     if(this.candidateId){
@@ -76,6 +75,9 @@ export class MessagesComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.username = user.data.fullName;
     });
   }
+
+  
+
   }
 
   initializeChat(): void {
@@ -106,9 +108,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.messagesSubscription?.unsubscribe();
     this.lastMessageSubscription?.unsubscribe();
     this.routerSubscription?.unsubscribe();
-    if (this.recruiterId) {
-      this.chatService.disconnectUser();
-    }
+    
   }
 
   ngAfterViewChecked() {
@@ -121,7 +121,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   sendMessage() {
     if (this.recruiterId && this.candidateId && this.message.trim()) {
-      this.chatService.sendDirectMessage(this.recruiterId, this.candidateId, this.message);
+      this.chatService.sendDirectMessage(this.recruiterId, this.candidateId, this.message,this.username);
       this.message = '';
     } else {
       this.toaster.error('Something went wrong. Try logging in again.');
@@ -137,4 +137,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
     } catch (err) { }
   }
+
+  
+
 }

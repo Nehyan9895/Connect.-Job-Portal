@@ -27,7 +27,7 @@ class AdminService{
             throw new Error('This is not an admin')
         }
         const token = jwt.sign({email:admin.email,id:admin._id},JWT_SECRET,{expiresIn:'10h'});
-        return {token,admin:{email:admin.email,id:admin._id,username:admin.username}}
+        return {token,admin:{email:admin.email,id:admin._id,username:admin.username},message:'Admin login successfull'}
     }
 
     async getAllCandidatesWithUserInfo() {

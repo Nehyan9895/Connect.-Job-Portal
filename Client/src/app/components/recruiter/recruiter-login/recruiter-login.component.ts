@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FooterComponent } from '../../candidate/shared/footer/footer.component';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RecruiterService } from '../../../services/recruiter/recruiter.service';
+import { RecruiterService } from '../../../services/recruiter.service';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 

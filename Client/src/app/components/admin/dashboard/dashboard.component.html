@@ -1,14 +1,18 @@
 <app-admin-header></app-admin-header>
 
 <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 p-4">
-    <app-admin-side-bar></app-admin-side-bar>
+    <app-admin-side-bar class="col-span-1"></app-admin-side-bar>
 
     <main class="col-span-4 space-y-4">
-        
-
         <section class="bg-white p-4 rounded-lg shadow">
-            
+            <h2 class="text-xl font-semibold mb-4">Recruiters and Users Distribution</h2>
+
+            <!-- Combined Chart -->
+            <div>
+                <canvasjs-chart [options]="chartOptions" ></canvasjs-chart>
+            </div>
         </section>
     </main>
 </div>
+
 <app-footer></app-footer>

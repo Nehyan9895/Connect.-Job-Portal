@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AdminBackendService } from '../../../../services/admin/admin.service';
+import { AdminBackendService } from '../../../../services/admin.service';
 import { ToastrService } from 'ngx-toastr';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { userService } from '../../../services/users/user.service';
+import { userService } from '../../../services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { HeaderComponent } from "../shared/header/header.component";
 import { FooterComponent } from "../shared/footer/footer.component";
@@ -9,6 +9,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { TagModule } from 'primeng/tag';
 import { JobTypePipe } from '../../../pipes/job-type.pipe';
+import { WebsocketService } from '../../../services/websocket.service';
 
 @Component({
     selector: 'app-home',
@@ -25,11 +26,12 @@ export class HomeComponent implements OnInit {
   pageIndex = 0;
   pageSizeOptions = [2, 3, 4];
 
-  constructor(private userService: userService, private toastr: ToastrService, private router: Router) {}
+  constructor(private userService: userService, private toastr: ToastrService, private router: Router,private webSocketService:WebsocketService) {}
 
   ngOnInit(): void {
     
-    const candidateId = localStorage.getItem('user_id'); 
+    const candidateId = localStorage.getItem('user_id') as string; 
+    this.webSocketService.connectUser(candidateId);
     if (candidateId) {
       this.userService.getJobsForCandidate(candidateId).subscribe((data) => {
         console.log(data.data);
